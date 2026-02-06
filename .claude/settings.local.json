@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git mv:*)",
+      "Bash(ren:*)",
+      "Bash(cmake:*)",
+      "Bash(where:*)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(dir:*)"
+    ]
+  }
+}

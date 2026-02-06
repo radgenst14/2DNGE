@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # Development build environment
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 2dnge:dev
+    container_name: 2dnge-dev
+    volumes:
+      # Mount source code for live development
+      - .:/app
+      # Persist build artifacts
+      - build-cache:/app/build
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: bash
+
+  # Build service - compiles the project
+  build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 2dnge:dev
+    container_name: 2dnge-build
+    volumes:
+      - .:/app
+      - build-cache:/app/build
+    working_dir: /app
+    command: bash -c "cd build && cmake .. -G Ninja && ninja"
+
+  # Test runner service
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 2dnge:dev
+    container_name: 2dnge-test
+    volumes:
+      - .:/app
+      - build-cache:/app/build
+    working_dir: /app
+    command: bash -c "cd build && cmake .. -G Ninja && ninja && ctest --output-on-failure"
+
+  # GUI-enabled service (requires X11 forwarding on host)
+  gui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 2dnge:dev
+    container_name: 2dnge-gui
+    volumes:
+      - .:/app
+      - build-cache:/app/build
+      # X11 socket for display (Linux)
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    environment:
+      - DISPLAY=${DISPLAY}
+      - SDL_VIDEODRIVER=x11
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    network_mode: host
+
+volumes:
+  build-cache:
+    driver: local
