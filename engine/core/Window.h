@@ -47,6 +47,11 @@ public:
     SDL_Window *GetWindow() const { return mWindow; };
     SDL_Surface *GetSurface() const { return mSurface; };
 
+    /*
+     * Set the surface of the window, which can be used for rendering operations.
+     */
+    void SetSurface(SDL_Surface *surface) { mSurface = surface; };
+
 private:
     int mWidth;     ///< The width of the window
     int mHeight;    ///< The height of the window

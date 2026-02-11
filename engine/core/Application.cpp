@@ -9,6 +9,7 @@ Application::Application()
         return;
     }
 
+    // Create a window with the specified title, width, and height
     auto title = new string("2DNGE");
     mWindow = std::make_unique<Window>(title, 800, 600);
     mIsRunning = true;

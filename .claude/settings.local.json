@@ -7,7 +7,11 @@
       "Bash(where:*)",
       "Bash(cmd /c:*)",
       "Bash(powershell -Command:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(./build/testing/Debug/run_tests.exe:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nImplement SDL2 window creation and application game loop\n\nSwitch SDL2 and GLM to FetchContent for easier builds, remove Python3\ndependency, and implement the core Application class with an\nInput/Update/Render loop and Window class with SDL2 window/surface\nmanagement.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)"
     ]
   }
 }
