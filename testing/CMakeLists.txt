@@ -20,4 +20,12 @@ target_link_libraries(run_tests
 )
 
 include(GoogleTest)
+
+# Copy SDL2 DLL next to the test executable so it can be found at runtime
+add_custom_command(TARGET run_tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:SDL2::SDL2>
+        $<TARGET_FILE_DIR:run_tests>
+)
+
 gtest_discover_tests(run_tests)

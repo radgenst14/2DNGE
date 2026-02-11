@@ -6,7 +6,7 @@ add_library(2dnge_engine
     core/Application.h
 )
 
-target_include_directories(2dnge_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(2dnge_engine PUBLIC ${CMAKE_SOURCE_DIR})
 
 # Link all dependencies
 target_link_libraries(2dnge_engine PUBLIC
@@ -14,5 +14,4 @@ target_link_libraries(2dnge_engine PUBLIC
     glm::glm
     enet
     imgui
-    Python3::Python
 )

@@ -6,20 +6,29 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ── Dependencies ─────────────────────────────────────
 
-# SDL2 (install via system package manager, vcpkg, or manually)
-find_package(SDL2 REQUIRED)
-
-# GLM (header-only math library)
-find_package(glm REQUIRED)
-
-# Python3 (for scripting)
-find_package(Python3 REQUIRED COMPONENTS Development)
-
 # OpenGL (needed by ImGui backend)
 find_package(OpenGL REQUIRED)
 
-# ENet (fetched from source)
 include(FetchContent)
+
+# GLM (header-only math library, fetched from source)
+FetchContent_Declare(
+  glm
+  GIT_REPOSITORY https://github.com/g-truc/glm.git
+  GIT_TAG 1.0.1
+)
+FetchContent_MakeAvailable(glm)
+
+# SDL2 (fetched from source)
+set(SDL_TEST OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+  SDL2
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+  GIT_TAG release-2.30.12
+)
+FetchContent_MakeAvailable(SDL2)
+
+# ENet (fetched from source)
 FetchContent_Declare(
   enet
   GIT_REPOSITORY https://github.com/lsalzman/enet.git
