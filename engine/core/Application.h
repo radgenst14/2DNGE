@@ -7,6 +7,7 @@
 #include <SDL.h>
 
 class Window;
+class Renderer;
 
 /*
  * @class Application
@@ -34,7 +35,9 @@ public:
 
 private:
     bool mIsRunning = false;
-    std::unique_ptr<Window> mWindow;
+
+    std::unique_ptr<Window> mWindow;     ///< The main application window
+    std::unique_ptr<Renderer> mRenderer; ///< The renderer for drawing graphics
 };
 
 #endif

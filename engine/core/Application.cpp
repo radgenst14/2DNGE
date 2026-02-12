@@ -12,6 +12,18 @@ Application::Application()
     // Create a window with the specified title, width, and height
     auto title = new string("2DNGE");
     mWindow = std::make_unique<Window>(title, 800, 600);
+
+    // Check if the window was created successfully
+    if (!mWindow->GetWindow())
+    {
+        SDL_Log("Failed to create window: %s", SDL_GetError());
+        return;
+    }
+
+    // Create a renderer for the window
+    mRenderer = std::make_unique<Renderer>();
+
+    // Set the application as running
     mIsRunning = true;
 }
 
