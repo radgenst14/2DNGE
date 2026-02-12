@@ -16,8 +16,6 @@ Window::Window(string *title, int width, int height)
         SDL_Log("Failed to create window: %s", SDL_GetError());
         return;
     }
-
-    mSurface = SDL_GetWindowSurface(mWindow);
 }
 
 Window::~Window()

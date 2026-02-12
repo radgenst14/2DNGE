@@ -20,37 +20,30 @@ public:
     Window(string *title, int width = 0, int height = 0);
     ~Window();
 
-    // Delete copy constructor and assignment operator
+    /*
+     * Delete copy constructor and assignment operator
+     */
     Window(const Window &) = delete;
     Window &operator=(const Window &) = delete;
 
-    /*
-     * Width and Height getters
-     */
+    /// @brief Get the width and height of the window
+    /// @return The width and height of the window
     int GetWidth() const { return mWidth; };
     int GetHeight() const { return mHeight; };
 
-    /*
-     * Width and Height setters
-     */
+    /// @brief  Set the width of the window
+    /// @param width
     void SetWidth(int width) { mWidth = width; };
     void SetHeight(int height) { mHeight = height; };
 
-    /*
-     * Title getter
-     */
+    /// @brief Get the title of the window
+    /// @return The title of the window
     string GetTitle() const { return *mTitle; };
 
-    /*
-     * SDL Window and Surface getters
-     */
+    /// @brief Get the SDL_Window associated with this Window
+    /// @return
     SDL_Window *GetWindow() const { return mWindow; };
     SDL_Surface *GetSurface() const { return mSurface; };
-
-    /*
-     * Set the surface of the window, which can be used for rendering operations.
-     */
-    void SetSurface(SDL_Surface *surface) { mSurface = surface; };
 
 private:
     int mWidth;     ///< The width of the window

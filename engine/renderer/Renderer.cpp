@@ -1,11 +1,42 @@
 #include "Renderer.h"
+#include "../core/Window.h"
 
-Renderer::Renderer()
+Renderer::Renderer(Window *window)
 {
+    // Get the SDL_Window from our Window wrapper
+    SDL_Window *sdlWindow = window->GetWindow();
 
-}
+    // Create the renderer
+    mRenderer = SDL_CreateRenderer(
+        sdlWindow,                                           // Which window
+        -1,                                                  // Auto-select driver
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC // Hardware + VSync
+    );
+};
 
 Renderer::~Renderer()
 {
+    SDL_DestroyRenderer(mRenderer);
+}
 
+void Renderer::DrawGrid(int cellSize, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+{
+    // Set the draw color for the grid lines
+    SetDrawColor(r, g, b, a);
+
+    // Get the size of the rendering target
+    int width, height;
+    SDL_GetRendererOutputSize(mRenderer, &width, &height);
+
+    // Draw vertical grid lines
+    for (int x = 0; x < width; x += cellSize)
+    {
+        SDL_RenderDrawLine(mRenderer, x, 0, x, height);
+    }
+
+    // Draw horizontal grid lines
+    for (int y = 0; y < height; y += cellSize)
+    {
+        SDL_RenderDrawLine(mRenderer, 0, y, width, y);
+    }
 }

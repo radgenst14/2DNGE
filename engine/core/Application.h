@@ -8,6 +8,7 @@
 
 class Window;
 class Renderer;
+class Timer;
 
 /*
  * @class Application
@@ -21,7 +22,7 @@ public:
     Application();
     ~Application();
 
-    // Delete copy constructor and assignment operator
+    /// @brief Delete copy constructor and assignment operator
     Application(const Application &) = delete;
     Application &operator=(const Application &) = delete;
 
@@ -36,8 +37,9 @@ public:
 private:
     bool mIsRunning = false;
 
-    std::unique_ptr<Window> mWindow;     ///< The main application window
-    std::unique_ptr<Renderer> mRenderer; ///< The renderer for drawing graphics
+    std::shared_ptr<Window> mWindow = nullptr; ///< The main application window
+    std::shared_ptr<Renderer> mRenderer;       ///< The renderer for drawing graphics
+    std::shared_ptr<Timer> mTimer;             ///< A timer for managing time-related functionality
 };
 
 #endif
