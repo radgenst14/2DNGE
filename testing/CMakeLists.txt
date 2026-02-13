@@ -12,6 +12,8 @@ enable_testing()
 
 add_executable(run_tests
     test_core/test_window.cpp
+    test_core/test_timer.cpp
+    test_core/test_application.cpp
 )
 
 target_link_libraries(run_tests

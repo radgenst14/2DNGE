@@ -38,7 +38,8 @@ Application::~Application()
 
 void Application::Run()
 {
-    Timer timer;
+    // Reset the timer so the first frame's delta is near zero
+    mTimer.Reset();
 
     // Fixed timestep variables
     const double TICK_RATE = 60.0;           // 60 ticks per second
@@ -48,15 +49,15 @@ void Application::Run()
     while (mIsRunning)
     {
         // Update the timer and calculate the time since the last frame
-        mTimer->Tick();
-        double frameTime = timer.GetDeltaTime();
+        mTimer.Tick();
+        double frameTime = mTimer.GetDeltaTime();
         accumulator += frameTime;
 
         // Handle input and update the application state at fixed intervals
         while (accumulator >= FIXED_DT)
         {
-            Input(); // Handle input events via SDL_PollEvent
-            Update();
+            Input();  // Handle input events via SDL_PollEvent
+            Update(); // Update application state (e.g., game logic, physics) at a fixed rate
             accumulator -= FIXED_DT;
         }
 
@@ -81,7 +82,6 @@ void Application::Input()
 
 void Application::Update()
 {
-    // Update application state here
 }
 
 void Application::Render()

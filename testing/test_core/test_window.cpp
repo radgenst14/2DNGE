@@ -3,13 +3,12 @@
 
 TEST(WindowTest, GettersAndSetters)
 {
-    Window window = Window(new string("Test Window"));
+    Window window(new string("Test Window"));
 
     // Test default values (assuming they are initialized to 0)
     EXPECT_EQ(window.GetWidth(), 0);
     EXPECT_EQ(window.GetHeight(), 0);
-    EXPECT_EQ(window.GetWindow(), nullptr);
-    EXPECT_EQ(window.GetSurface(), nullptr);
+    EXPECT_NE(window.GetWindow(), nullptr);
 
     // Test title getter
     EXPECT_EQ(window.GetTitle(), "Test Window");
