@@ -3,22 +3,75 @@
 
 #pragma once
 
-#include <cstdint>
-
-using EntityID = uint32_t;
+#include <vector>
+#include <memory>
+#include <cassert>
+#include "ComponentTypeID.h"
+#include "ComponentPool.h"
 
 class EntityManager
 {
 public:
-    EntityManager();
-    ~EntityManager();
+    EntityManager() = default;
+    ~EntityManager() = default;
 
-    /* Delete default constructor and assignment operator */
+    /* Delete copy constructor and assignment operator */
     EntityManager(const EntityManager &) = delete;
     EntityManager &operator=(const EntityManager &) = delete;
 
+    EntityID createEntity()
+    {
+        return mNextEntityID++;
+    }
+
+    template <typename T>
+    T &addComponent(EntityID entity, const T &component)
+    {
+        auto &pool = getOrCreatePool<T>();
+        return pool.add(entity, component);
+    }
+
+    template <typename T>
+    const T &getComponent(EntityID entity) const
+    {
+        return getPool<T>().get(entity);
+    }
+
+    template <typename T>
+    bool hasComponent(EntityID entity) const
+    {
+        ComponentTypeID id = getComponentTypeID<T>();
+        if (id >= mPools.size() || !mPools[id])
+            return false;
+        return static_cast<const ComponentPool<T> *>(mPools[id].get())->has(entity);
+    }
+
 private:
-    EntityID mNextEntityID = 0; ///< The next available entity ID
+    template <typename T>
+    ComponentPool<T> &getOrCreatePool()
+    {
+        ComponentTypeID id = getComponentTypeID<T>();
+        if (id >= mPools.size())
+        {
+            mPools.resize(id + 1);
+        }
+        if (!mPools[id])
+        {
+            mPools[id] = std::make_unique<ComponentPool<T>>();
+        }
+        return *static_cast<ComponentPool<T> *>(mPools[id].get());
+    }
+
+    template <typename T>
+    const ComponentPool<T> &getPool() const
+    {
+        ComponentTypeID id = getComponentTypeID<T>();
+        assert(id < mPools.size() && mPools[id] && "Pool does not exist for this type");
+        return *static_cast<const ComponentPool<T> *>(mPools[id].get());
+    }
+
+    EntityID mNextEntityID = 0;
+    std::vector<std::unique_ptr<IComponentPool>> mPools;
 };
 
 #endif

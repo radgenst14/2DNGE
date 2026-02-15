@@ -1,7 +1,9 @@
 # Collect all engine source files
 add_library(2dnge_engine
-    ecs/Entity.cpp
-    ecs/Entity.h
+    ecs/EntityManager.cpp
+    ecs/EntityManager.h
+    ecs/ComponentTypeID.h
+    ecs/ComponentPool.h
     ecs/components/Transform.h
     ecs/components/RigidBody.h
     core/Window.cpp
