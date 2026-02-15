@@ -6,6 +6,8 @@ add_library(2dnge_engine
     core/Application.h
     core/Timer.cpp
     core/Timer.h
+    components/Transform.h
+    components/RigidBody.h
     renderer/Renderer.cpp
     renderer/Renderer.h
 )
