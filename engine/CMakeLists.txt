@@ -1,15 +1,22 @@
 # Collect all engine source files
 add_library(2dnge_engine
+    ecs/Entity.cpp
+    ecs/Entity.h
+    ecs/components/Transform.h
+    ecs/components/RigidBody.h
     core/Window.cpp
     core/Window.h
     core/Application.cpp
     core/Application.h
     core/Timer.cpp
     core/Timer.h
-    components/Transform.h
-    components/RigidBody.h
+    physics/Math.h
+    physics/PhysicsManager.cpp
+    physics/PhysicsManager.h
     renderer/Renderer.cpp
     renderer/Renderer.h
+    renderer/RenderManager.cpp
+    renderer/RenderManager.h
 )
 
 target_include_directories(2dnge_engine PUBLIC ${CMAKE_SOURCE_DIR})
