@@ -19,10 +19,8 @@ public:
     EntityManager(const EntityManager &) = delete;
     EntityManager &operator=(const EntityManager &) = delete;
 
-    EntityID createEntity()
-    {
-        return mNextEntityID++;
-    }
+    EntityID createEntity();
+    bool deleteEntity(EntityID entity);
 
     template <typename T>
     T &addComponent(EntityID entity, const T &component)
