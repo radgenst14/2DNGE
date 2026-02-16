@@ -30,6 +30,12 @@ public:
     }
 
     template <typename T>
+    T &getComponent(EntityID entity)
+    {
+        return getOrCreatePool<T>().get(entity);
+    }
+
+    template <typename T>
     const T &getComponent(EntityID entity) const
     {
         return getPool<T>().get(entity);
@@ -42,6 +48,18 @@ public:
         if (id >= mPools.size() || !mPools[id])
             return false;
         return static_cast<const ComponentPool<T> *>(mPools[id].get())->has(entity);
+    }
+
+    template <typename T>
+    ComponentPool<T> &getComponentPool()
+    {
+        return getOrCreatePool<T>();
+    }
+
+    template <typename T>
+    const ComponentPool<T> &getComponentPool() const
+    {
+        return getPool<T>();
     }
 
 private:

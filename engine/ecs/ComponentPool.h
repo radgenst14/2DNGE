@@ -75,6 +75,17 @@ public:
         return true;
     }
 
+    /**
+     * @brief Accessors for internal data structures (for iteration purposes)
+     */
+    const std::vector<EntityID> &getDenseToEntity() const { return mDenseToEntity; }
+    const std::vector<T> &getDense() const { return mDense; }
+    const std::vector<uint32_t> &getSparse() const { return mSparse; }
+
+    std::vector<EntityID> &getDenseToEntity() { return mDenseToEntity; }
+    std::vector<T> &getDense() { return mDense; }
+    std::vector<uint32_t> &getSparse() { return mSparse; }
+
 private:
     void ensureSparseSize(EntityID entity)
     {

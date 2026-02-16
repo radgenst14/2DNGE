@@ -33,8 +33,8 @@ private:
 
     TimePoint mStartTime;    /**< When the timer was created/reset */
     TimePoint mLastTickTime; /**< When Tick() was last called */
-    double mDeltaTime;       /**< Seconds between last two Tick() calls */
-    double mTotalTime;       /**< Total seconds since creation/reset */
+    float mDeltaTime;        /**< Seconds between last two Tick() calls */
+    float mTotalTime;        /**< Total seconds since creation/reset */
 };
 
 #endif
