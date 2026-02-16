@@ -4,7 +4,7 @@
 Renderer::Renderer(Window *window)
 {
     // Get the SDL_Window from our Window wrapper
-    SDL_Window *sdlWindow = window->GetWindow();
+    SDL_Window *sdlWindow = window->getWindow();
 
     // Create the renderer
     mRenderer = SDL_CreateRenderer(
@@ -19,10 +19,10 @@ Renderer::~Renderer()
     SDL_DestroyRenderer(mRenderer);
 }
 
-void Renderer::DrawGrid(int cellSize, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+void Renderer::drawGrid(int cellSize, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
     // Set the draw color for the grid lines
-    SetDrawColor(r, g, b, a);
+    setDrawColor(r, g, b, a);
 
     // Get the size of the rendering target
     int width, height;
@@ -41,7 +41,7 @@ void Renderer::DrawGrid(int cellSize, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
     }
 }
 
-void Renderer::DrawTexture(SDL_Texture *texture, const ECS::Transform &transform)
+void Renderer::drawTexture(SDL_Texture *texture, const ECS::Transform &transform)
 {
     // Query the texture to get its width and height
     int texWidth, texHeight;
@@ -59,7 +59,7 @@ void Renderer::DrawTexture(SDL_Texture *texture, const ECS::Transform &transform
                      transform.rotation, nullptr, SDL_FLIP_NONE);
 }
 
-void Renderer::DrawRect(const ECS::Transform &transform, int width, int height)
+void Renderer::drawRect(const ECS::Transform &transform, int width, int height)
 {
     // Calculate the destination rectangle based on the transform
     SDL_Rect destRect;

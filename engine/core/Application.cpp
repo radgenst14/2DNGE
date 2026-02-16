@@ -1,7 +1,9 @@
 #include "Application.h"
 #include "Window.h"
 #include "Timer.h"
+#include "SceneManager.h"
 #include "../renderer/Renderer.h"
+#include "../../game/scenes/PhysicsTestScene.h"
 
 Application::Application()
 {
@@ -16,7 +18,7 @@ Application::Application()
     auto title = new string("2DNGE");
     mWindow = std::shared_ptr<Window>(new Window(title, 800, 600));
 
-    if (!mWindow->GetWindow())
+    if (!mWindow->getWindow())
     {
         SDL_Log("Failed to create window: %s", SDL_GetError());
         return;
@@ -31,6 +33,18 @@ Application::Application()
         return;
     }
 
+    // Initialize the scene manager
+    mSceneManager = std::make_shared<SceneManager>();
+
+    if (!mSceneManager)
+    {
+        SDL_Log("Failed to create scene manager");
+        return;
+    }
+
+    // Set the initial scene to the PhysicsTestScene
+    mSceneManager->setScene(std::make_unique<PhysicsTestScene>());
+
     // Set the application as running
     mIsRunning = true;
 }
@@ -41,10 +55,10 @@ Application::~Application()
     SDL_Quit();
 }
 
-void Application::Run()
+void Application::run()
 {
     // Reset the timer so the first frame's delta is near zero
-    mTimer.Reset();
+    mTimer.reset();
 
     // Fixed timestep variables
     const double TICK_RATE = 60.0;           // 60 ticks per second
@@ -54,24 +68,24 @@ void Application::Run()
     while (mIsRunning)
     {
         // Update the timer and calculate the time since the last frame
-        mTimer.Tick();
-        double frameTime = mTimer.GetDeltaTime();
+        mTimer.tick();
+        double frameTime = mTimer.getDeltaTime();
         accumulator += frameTime;
 
         // Handle input and update the application state at fixed intervals
         while (accumulator >= FIXED_DT)
         {
-            Input();                       // Handle input events via SDL_PollEvent
-            Update(mTimer.GetDeltaTime()); // Update application state (e.g., game logic, physics) at a fixed rate
+            handleInput();    // Handle input events via SDL_PollEvent
+            update(FIXED_DT); // Update application state (e.g., game logic, physics) at a fixed rate
             accumulator -= FIXED_DT;
         }
 
         // Render the application
-        Render();
+        render();
     }
 }
 
-void Application::Input()
+void Application::handleInput()
 {
     SDL_Event event;
 
@@ -85,10 +99,18 @@ void Application::Input()
     }
 }
 
-void Application::Update(float dt)
+void Application::update(float dt)
 {
+    mSceneManager->getActiveScene()->update(dt);
 }
 
-void Application::Render()
+void Application::render()
 {
+    mRenderer->setDrawColor(0, 0, 0, 255); // Set draw color to black
+    mRenderer->clear();                    // Clear the screen before rendering
+
+    // Render the active scene
+    mSceneManager->getActiveScene()->render(*mRenderer);
+
+    mRenderer->present(); // Present the rendered frame to the screen
 }

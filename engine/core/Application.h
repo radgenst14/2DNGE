@@ -28,12 +28,12 @@ public:
     Application &operator=(const Application &) = delete;
 
     /** @brief Runs the main application loop, handling events and updating the application state. */
-    void Run();
+    void run();
 
     /** @brief  Methods for handling input, updating the application state, and rendering the application. */
-    void Input();
-    void Update(float dt);
-    void Render();
+    void handleInput();
+    void update(float dt);
+    void render();
 
 private:
     bool mIsRunning = false;

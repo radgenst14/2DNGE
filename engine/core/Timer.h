@@ -13,27 +13,27 @@ public:
     Timer &operator=(const Timer &) = delete;
 
     /** Call this once per frame to update delta time */
-    void Tick();
+    void tick();
 
-    /** Get time since last Tick() in seconds */
-    double GetDeltaTime() const { return mDeltaTime; }
+    /** Get time since last tick() in seconds */
+    double getDeltaTime() const { return mDeltaTime; }
 
     /** Get total time since timer creation in seconds */
-    double GetTotalTime() const { return mTotalTime; }
+    double getTotalTime() const { return mTotalTime; }
 
     /** Get current time in seconds (for sampling) */
-    double GetCurrentTime() const;
+    double getCurrentTime() const;
 
     /** Reset to zero */
-    void Reset();
+    void reset();
 
 private:
     using Clock = std::chrono::steady_clock;
     using TimePoint = std::chrono::time_point<Clock>;
 
     TimePoint mStartTime;    /**< When the timer was created/reset */
-    TimePoint mLastTickTime; /**< When Tick() was last called */
-    float mDeltaTime;        /**< Seconds between last two Tick() calls */
+    TimePoint mLastTickTime; /**< When tick() was last called */
+    float mDeltaTime;        /**< Seconds between last two tick() calls */
     float mTotalTime;        /**< Total seconds since creation/reset */
 };
 

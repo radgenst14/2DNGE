@@ -86,6 +86,12 @@ public:
     std::vector<T> &getDense() { return mDense; }
     std::vector<uint32_t> &getSparse() { return mSparse; }
 
+    /** Range-based for loop support — iterates over EntityIDs */
+    auto begin() const { return mDenseToEntity.begin(); }
+    auto end() const { return mDenseToEntity.end(); }
+    auto begin() { return mDenseToEntity.begin(); }
+    auto end() { return mDenseToEntity.end(); }
+
 private:
     void ensureSparseSize(EntityID entity)
     {

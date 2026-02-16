@@ -9,8 +9,8 @@
 class SceneManager
 {
 public:
-    void SetScene(std::unique_ptr<IScene> scene);
-    IScene *GetActiveScene();
+    void setScene(std::unique_ptr<IScene> scene);
+    IScene *getActiveScene();
 
 private:
     std::unique_ptr<IScene> mActiveScene;

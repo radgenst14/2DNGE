@@ -7,7 +7,7 @@ Timer::Timer()
     mLastTickTime = mStartTime;
 }
 
-void Timer::Tick()
+void Timer::tick()
 {
     TimePoint currentTime = Clock::now();
 
@@ -22,14 +22,14 @@ void Timer::Tick()
     mLastTickTime = currentTime;
 }
 
-double Timer::GetCurrentTime() const
+double Timer::getCurrentTime() const
 {
     TimePoint currentTime = Clock::now();
     std::chrono::duration<double> elapsed = currentTime - mStartTime;
     return elapsed.count();
 }
 
-void Timer::Reset()
+void Timer::reset()
 {
     mStartTime = Clock::now();
     mLastTickTime = mStartTime;

@@ -6,18 +6,18 @@ TEST(WindowTest, GettersAndSetters)
     Window window(new string("Test Window"));
 
     // Test default values (assuming they are initialized to 0)
-    EXPECT_EQ(window.GetWidth(), 0);
-    EXPECT_EQ(window.GetHeight(), 0);
-    EXPECT_NE(window.GetWindow(), nullptr);
+    EXPECT_EQ(window.getWidth(), 0);
+    EXPECT_EQ(window.getHeight(), 0);
+    EXPECT_NE(window.getWindow(), nullptr);
 
     // Test title getter
-    EXPECT_EQ(window.GetTitle(), "Test Window");
+    EXPECT_EQ(window.getTitle(), "Test Window");
 
     // Set new values
-    window.SetWidth(800);
-    window.SetHeight(600);
+    window.setWidth(800);
+    window.setHeight(600);
 
     // Test if the getters return the correct values
-    EXPECT_EQ(window.GetWidth(), 800);
-    EXPECT_EQ(window.GetHeight(), 600);
+    EXPECT_EQ(window.getWidth(), 800);
+    EXPECT_EQ(window.getHeight(), 600);
 }
