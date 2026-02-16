@@ -9,8 +9,7 @@
 
 class Window;
 class Renderer;
-class EntityManager;
-class PhysicsManager;
+class SceneManager;
 
 /**
  * @class Application
@@ -40,10 +39,9 @@ private:
     bool mIsRunning = false;
     Timer mTimer; /**< A timer for managing frame timing */
 
-    std::shared_ptr<Window> mWindow = nullptr;       /**< The main application window */
-    std::shared_ptr<Renderer> mRenderer;             /**< The renderer for drawing graphics */
-    std::shared_ptr<EntityManager> mEntityManager;   /**< The entity manager for managing game entities and components */
-    std::shared_ptr<PhysicsManager> mPhysicsManager; /**< The physics manager for handling physics updates */
+    std::shared_ptr<Window> mWindow = nullptr;   /**< The main application window */
+    std::shared_ptr<Renderer> mRenderer;         /**< The renderer for drawing graphics */
+    std::shared_ptr<SceneManager> mSceneManager; /**< The scene manager for managing game scenes */
 };
 
 #endif

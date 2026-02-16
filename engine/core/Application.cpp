@@ -2,8 +2,6 @@
 #include "Window.h"
 #include "Timer.h"
 #include "../renderer/Renderer.h"
-#include "../ecs/EntityManager.h"
-#include "../physics/PhysicsManager.h"
 
 Application::Application()
 {
@@ -30,22 +28,6 @@ Application::Application()
     if (!mRenderer)
     {
         SDL_Log("Failed to create renderer: %s", SDL_GetError());
-        return;
-    }
-
-    // Initialize the entity manager and physics manager
-    mEntityManager = std::make_shared<EntityManager>();
-    mPhysicsManager = std::make_shared<PhysicsManager>(mEntityManager.get());
-
-    if (!mEntityManager)
-    {
-        SDL_Log("Failed to create EntityManager");
-        return;
-    }
-
-    if (!mPhysicsManager)
-    {
-        SDL_Log("Failed to create PhysicsManager");
         return;
     }
 
@@ -105,8 +87,6 @@ void Application::Input()
 
 void Application::Update(float dt)
 {
-    // Update the physics manager with the fixed delta time
-    mPhysicsManager->update(dt);
 }
 
 void Application::Render()

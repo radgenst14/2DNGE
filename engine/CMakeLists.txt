@@ -11,6 +11,9 @@ add_library(2dnge_engine
     core/Window.h
     core/Application.cpp
     core/Application.h
+    core/IScene.h
+    core/SceneManager.cpp
+    core/SceneManager.h
     core/Timer.cpp
     core/Timer.h
     physics/Math.h
