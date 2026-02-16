@@ -4,6 +4,7 @@ add_library(2dnge_engine
     ecs/EntityManager.h
     ecs/ComponentTypeID.h
     ecs/ComponentPool.h
+    ecs/components/Collider.h
     ecs/components/Transform.h
     ecs/components/RigidBody.h
     core/Window.cpp

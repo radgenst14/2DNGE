@@ -4,6 +4,7 @@
 #pragma once
 
 #include <SDL.h>
+#include "../ecs/components/Transform.h"
 
 class Window;
 
@@ -47,6 +48,18 @@ public:
      * @param a
      */
     void DrawGrid(int cellSize, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+
+    /**
+     * @brief Draw a texture at a position with rotation and scale
+     * @param texture SDL_Texture to draw
+     * @param transform Transform component with float position/rotation/scale
+     */
+    void DrawTexture(SDL_Texture *texture, const ECS::Transform &transform);
+
+    /**
+     * @brief Draw a filled rectangle
+     */
+    void DrawRect(const ECS::Transform &transform, int width, int height);
 
 private:
     SDL_Renderer *mRenderer = nullptr; /**< The SDL renderer associated with this class */

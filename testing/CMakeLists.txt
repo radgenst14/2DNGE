@@ -14,6 +14,7 @@ add_executable(run_tests
     test_core/test_window.cpp
     test_core/test_timer.cpp
     test_core/test_application.cpp
+    test_ecs/test_componentPool.cpp
     test_ecs/test_entity.cpp
     test_ecs/test_entityManager.cpp
 )
