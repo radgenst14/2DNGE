@@ -9,6 +9,8 @@
 
 class Window;
 class Renderer;
+class EntityManager;
+class PhysicsManager;
 
 /**
  * @class Application
@@ -31,15 +33,17 @@ public:
 
     /** @brief  Methods for handling input, updating the application state, and rendering the application. */
     void Input();
-    void Update();
+    void Update(float dt);
     void Render();
 
 private:
     bool mIsRunning = false;
     Timer mTimer; /**< A timer for managing frame timing */
 
-    std::shared_ptr<Window> mWindow = nullptr; /**< The main application window */
-    std::shared_ptr<Renderer> mRenderer;       /**< The renderer for drawing graphics */
+    std::shared_ptr<Window> mWindow = nullptr;       /**< The main application window */
+    std::shared_ptr<Renderer> mRenderer;             /**< The renderer for drawing graphics */
+    std::shared_ptr<EntityManager> mEntityManager;   /**< The entity manager for managing game entities and components */
+    std::shared_ptr<PhysicsManager> mPhysicsManager; /**< The physics manager for handling physics updates */
 };
 
 #endif

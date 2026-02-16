@@ -8,15 +8,9 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(2dnge_tests
-    test_core/test_window.cpp
-    test_core/test_timer.cpp
-    test_core/test_application.cpp
-    test_ecs/test_componentPool.cpp
-    test_ecs/test_entity.cpp
-    test_ecs/test_entityManager.cpp
-    test_physics/test_collisionDetector.cpp
-)
+file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "test_*/*.cpp")
+
+add_executable(2dnge_tests ${TEST_SOURCES})
 
 target_link_libraries(2dnge_tests
     2dnge_engine
