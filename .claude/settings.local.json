@@ -14,7 +14,8 @@
       "Bash(git push:*)",
       "Bash(.buildtestingDebugrun_tests.exe:*)",
       "Bash(git -C /c/Users/tucke/OneDrive/Desktop/CSE/2DNGE diff HEAD -- engine/ecs/EntityManager.h engine/ecs/EntityManager.cpp engine/ecs/Entity.h engine/ecs/Entity.cpp)",
-      "Bash(ctest:*)"
+      "Bash(ctest:*)",
+      "Bash(./build/testing/Debug/2dnge_tests.exe:*)"
     ]
   }
 }

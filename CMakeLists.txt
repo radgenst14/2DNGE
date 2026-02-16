@@ -66,4 +66,6 @@ target_link_libraries(imgui PUBLIC SDL2::SDL2 OpenGL::GL)
 # ── Subdirectories ───────────────────────────────────
 add_subdirectory(engine)
 add_subdirectory(app)
+
+enable_testing()
 add_subdirectory(testing)

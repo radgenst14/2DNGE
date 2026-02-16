@@ -8,18 +8,17 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-
-add_executable(run_tests
+add_executable(2dnge_tests
     test_core/test_window.cpp
     test_core/test_timer.cpp
     test_core/test_application.cpp
     test_ecs/test_componentPool.cpp
     test_ecs/test_entity.cpp
     test_ecs/test_entityManager.cpp
+    test_physics/test_collisionDetector.cpp
 )
 
-target_link_libraries(run_tests
+target_link_libraries(2dnge_tests
     2dnge_engine
     GTest::gtest_main
 )
@@ -27,10 +26,10 @@ target_link_libraries(run_tests
 include(GoogleTest)
 
 # Copy SDL2 DLL next to the test executable so it can be found at runtime
-add_custom_command(TARGET run_tests POST_BUILD
+add_custom_command(TARGET 2dnge_tests POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:SDL2::SDL2>
-        $<TARGET_FILE_DIR:run_tests>
+        $<TARGET_FILE_DIR:2dnge_tests>
 )
 
-gtest_discover_tests(run_tests)
+gtest_discover_tests(2dnge_tests)

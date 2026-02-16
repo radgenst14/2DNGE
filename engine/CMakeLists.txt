@@ -14,6 +14,8 @@ add_library(2dnge_engine
     core/Timer.cpp
     core/Timer.h
     physics/Math.h
+    physics/CollisionDetector.cpp
+    physics/CollisionDetector.h
     physics/PhysicsManager.cpp
     physics/PhysicsManager.h
     renderer/Renderer.cpp
