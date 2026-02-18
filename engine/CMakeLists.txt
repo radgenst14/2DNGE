@@ -16,6 +16,8 @@ add_library(2dnge_engine
     core/SceneManager.h
     core/Timer.cpp
     core/Timer.h
+    core/InputManager.cpp
+    core/InputManager.h
     physics/Math.h
     physics/CollisionDetector.cpp
     physics/CollisionDetector.h
@@ -25,6 +27,10 @@ add_library(2dnge_engine
     renderer/Renderer.h
     renderer/RenderManager.cpp
     renderer/RenderManager.h
+    renderer/AssetManager.cpp
+    renderer/AssetManager.h
+    renderer/helpers/SpriteRenderer.cpp
+    renderer/helpers/SpriteRenderer.h
 )
 
 target_include_directories(2dnge_engine PUBLIC ${CMAKE_SOURCE_DIR})
