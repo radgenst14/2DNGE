@@ -10,6 +10,7 @@
 class Window;
 class Renderer;
 class SceneManager;
+class InputManager;
 
 /**
  * @class Application
@@ -42,6 +43,7 @@ private:
     std::shared_ptr<Window> mWindow = nullptr;   /**< The main application window */
     std::shared_ptr<Renderer> mRenderer;         /**< The renderer for drawing graphics */
     std::shared_ptr<SceneManager> mSceneManager; /**< The scene manager for managing game scenes */
+    std::shared_ptr<InputManager> mInputManager; /**< The input manager for handling user inputs */
 };
 
 #endif

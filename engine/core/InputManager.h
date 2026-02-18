@@ -4,6 +4,7 @@
 #pragma once
 
 #include <SDL_scancode.h>
+#include <SDL_events.h>
 
 class InputManager
 {
@@ -15,7 +16,8 @@ public:
     InputManager(const InputManager &) = delete;
     InputManager &operator=(const InputManager &) = delete;
 
-    void update();
+    void clearBuffers();
+    void processEvent(const SDL_Event &event);
 
     /** Keyboard state queries */
     bool isKeyDown(SDL_Scancode key) const;
@@ -23,8 +25,9 @@ public:
     bool isKeyReleased(SDL_Scancode key) const; // Just released this frame
 
 private:
-    const Uint8 *mCurrentKeyState = nullptr;      ///< Current key state (owned by SDL)
-    Uint8 mPreviousKeyState[SDL_NUM_SCANCODES]{}; ///< Previous key state (owned by InputManager)
+    const Uint8 *mCurrentKeyState = nullptr;          ///< Current key state (owned by SDL)
+    Uint8 mBufferedPresses[SDL_NUM_SCANCODES]{};      ///< Keys pressed at any point this frame
+    Uint8 mBufferedReleases[SDL_NUM_SCANCODES]{};     ///< Keys released at any point this frame
 };
 
 #endif

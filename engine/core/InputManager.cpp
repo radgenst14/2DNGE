@@ -5,22 +5,30 @@
 
 InputManager::InputManager()
 {
+    // SDL owns this array and keeps it updated — grab the pointer once
+    mCurrentKeyState = SDL_GetKeyboardState(nullptr);
 }
 
 InputManager::~InputManager()
 {
 }
 
-void InputManager::update()
+void InputManager::clearBuffers()
 {
-    // Snapshot current key state to previous
-    if (mCurrentKeyState)
-    {
-        std::memcpy(mPreviousKeyState, mCurrentKeyState, SDL_NUM_SCANCODES);
-    }
+    std::memset(mBufferedPresses, 0, SDL_NUM_SCANCODES);
+    std::memset(mBufferedReleases, 0, SDL_NUM_SCANCODES);
+}
 
-    // SDL owns this array — just grab the pointer
-    mCurrentKeyState = SDL_GetKeyboardState(nullptr);
+void InputManager::processEvent(const SDL_Event &event)
+{
+    if (event.type == SDL_KEYDOWN && !event.key.repeat)
+    {
+        mBufferedPresses[event.key.keysym.scancode] = 1;
+    }
+    else if (event.type == SDL_KEYUP)
+    {
+        mBufferedReleases[event.key.keysym.scancode] = 1;
+    }
 }
 
 bool InputManager::isKeyDown(SDL_Scancode key) const
@@ -30,10 +38,10 @@ bool InputManager::isKeyDown(SDL_Scancode key) const
 
 bool InputManager::isKeyPressed(SDL_Scancode key) const
 {
-    return mCurrentKeyState && mCurrentKeyState[key] && !mPreviousKeyState[key];
+    return mBufferedPresses[key];
 }
 
 bool InputManager::isKeyReleased(SDL_Scancode key) const
 {
-    return mCurrentKeyState && !mCurrentKeyState[key] && mPreviousKeyState[key];
+    return mBufferedReleases[key];
 }

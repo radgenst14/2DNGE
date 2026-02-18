@@ -36,6 +36,25 @@ protected:
     {
         mKeyState[key] = pressed ? 1 : 0;
     }
+
+    /// Inject a key state change into both SDL's array and the InputManager's event buffer
+    void simulateKey(InputManager &input, SDL_Scancode key, bool pressed)
+    {
+        setKey(key, pressed);
+
+        SDL_Event event;
+        std::memset(&event, 0, sizeof(event));
+        event.type = pressed ? SDL_KEYDOWN : SDL_KEYUP;
+        event.key.keysym.scancode = key;
+        event.key.repeat = 0;
+        input.processEvent(event);
+    }
+
+    /// Simulate a frame boundary: clear buffers
+    void nextFrame(InputManager &input)
+    {
+        input.clearBuffers();
+    }
 };
 
 // ---- Tests for initial / idle state ----
@@ -53,7 +72,7 @@ TEST_F(InputManagerTest, InitialStateBeforeUpdate)
 TEST_F(InputManagerTest, UpdatePopulatesKeyState)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
     // After update, keyboard state pointer is valid — no keys should be pressed
     EXPECT_FALSE(input.isKeyDown(SDL_SCANCODE_A));
@@ -64,7 +83,7 @@ TEST_F(InputManagerTest, UpdatePopulatesKeyState)
 TEST_F(InputManagerTest, NoSpuriousPressAfterFirstUpdate)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
     EXPECT_FALSE(input.isKeyPressed(SDL_SCANCODE_A));
     EXPECT_FALSE(input.isKeyPressed(SDL_SCANCODE_RETURN));
@@ -73,7 +92,7 @@ TEST_F(InputManagerTest, NoSpuriousPressAfterFirstUpdate)
 TEST_F(InputManagerTest, NoSpuriousReleaseAfterFirstUpdate)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
     EXPECT_FALSE(input.isKeyReleased(SDL_SCANCODE_A));
     EXPECT_FALSE(input.isKeyReleased(SDL_SCANCODE_RETURN));
@@ -82,9 +101,9 @@ TEST_F(InputManagerTest, NoSpuriousReleaseAfterFirstUpdate)
 TEST_F(InputManagerTest, ConsecutiveUpdatesWithNoInput)
 {
     InputManager input;
-    input.update();
-    input.update();
-    input.update();
+    nextFrame(input);
+    nextFrame(input);
+    nextFrame(input);
 
     EXPECT_FALSE(input.isKeyDown(SDL_SCANCODE_W));
     EXPECT_FALSE(input.isKeyPressed(SDL_SCANCODE_W));
@@ -94,7 +113,7 @@ TEST_F(InputManagerTest, ConsecutiveUpdatesWithNoInput)
 TEST_F(InputManagerTest, MultipleKeysAllIdle)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
     SDL_Scancode keys[] = {
         SDL_SCANCODE_A, SDL_SCANCODE_S, SDL_SCANCODE_D, SDL_SCANCODE_W,
@@ -109,21 +128,16 @@ TEST_F(InputManagerTest, MultipleKeysAllIdle)
 }
 
 // ---- Tests for key press detection ----
-//
-// Because InputManager::update() snapshots the SDL internal array into
-// mPreviousKeyState and then reads the same array as mCurrentKeyState,
-// we set keys AFTER calling update() so that:
-//   previous = snapshot before the change, current = live array with change.
 
 TEST_F(InputManagerTest, KeyDownDetected)
 {
     InputManager input;
-    input.update(); // previous = all 0, current ptr set
+    nextFrame(input); // previous = all 0, current ptr set
 
-    // Inject key A into SDL's live array
-    setKey(SDL_SCANCODE_A, true);
+    // Inject key A into SDL's live array and event buffer
+    simulateKey(input, SDL_SCANCODE_A, true);
 
-    // Now current[A]=1, previous[A]=0
+    // Now current[A]=1, buffered press[A]=1
     EXPECT_TRUE(input.isKeyDown(SDL_SCANCODE_A));
     EXPECT_TRUE(input.isKeyPressed(SDL_SCANCODE_A));
     EXPECT_FALSE(input.isKeyReleased(SDL_SCANCODE_A));
@@ -132,14 +146,14 @@ TEST_F(InputManagerTest, KeyDownDetected)
 TEST_F(InputManagerTest, KeyHeldDownAcrossFrames)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
-    setKey(SDL_SCANCODE_A, true);
-    // Frame 1: current[A]=1, previous[A]=0 → pressed
+    simulateKey(input, SDL_SCANCODE_A, true);
+    // Frame 1: buffered press[A]=1
     EXPECT_TRUE(input.isKeyPressed(SDL_SCANCODE_A));
 
-    input.update();
-    // Frame 2: previous[A]=1 (snapshotted), current[A]=1 (still held)
+    nextFrame(input);
+    // Frame 2: key still held but no new event → not "just pressed"
     EXPECT_TRUE(input.isKeyDown(SDL_SCANCODE_A));
     EXPECT_FALSE(input.isKeyPressed(SDL_SCANCODE_A));
     EXPECT_FALSE(input.isKeyReleased(SDL_SCANCODE_A));
@@ -148,16 +162,16 @@ TEST_F(InputManagerTest, KeyHeldDownAcrossFrames)
 TEST_F(InputManagerTest, KeyReleaseDetected)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
     // Press A
-    setKey(SDL_SCANCODE_A, true);
-    input.update(); // snapshot: previous[A]=1
+    simulateKey(input, SDL_SCANCODE_A, true);
+    nextFrame(input); // snapshot: previous[A]=1
 
     // Release A
-    setKey(SDL_SCANCODE_A, false);
+    simulateKey(input, SDL_SCANCODE_A, false);
 
-    // Now current[A]=0, previous[A]=1 → released
+    // Now current[A]=0, buffered release[A]=1
     EXPECT_FALSE(input.isKeyDown(SDL_SCANCODE_A));
     EXPECT_FALSE(input.isKeyPressed(SDL_SCANCODE_A));
     EXPECT_TRUE(input.isKeyReleased(SDL_SCANCODE_A));
@@ -166,16 +180,16 @@ TEST_F(InputManagerTest, KeyReleaseDetected)
 TEST_F(InputManagerTest, ReleaseStateLastsOneFrame)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
-    setKey(SDL_SCANCODE_A, true);
-    input.update(); // previous[A]=1
+    simulateKey(input, SDL_SCANCODE_A, true);
+    nextFrame(input); // previous[A]=1
 
-    setKey(SDL_SCANCODE_A, false);
+    simulateKey(input, SDL_SCANCODE_A, false);
     // Released this "frame"
     EXPECT_TRUE(input.isKeyReleased(SDL_SCANCODE_A));
 
-    input.update(); // previous[A]=0 now
+    nextFrame(input); // buffers cleared
 
     // Next frame — no longer released
     EXPECT_FALSE(input.isKeyDown(SDL_SCANCODE_A));
@@ -186,12 +200,12 @@ TEST_F(InputManagerTest, ReleaseStateLastsOneFrame)
 TEST_F(InputManagerTest, PressStateLastsOneFrame)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
-    setKey(SDL_SCANCODE_A, true);
+    simulateKey(input, SDL_SCANCODE_A, true);
     EXPECT_TRUE(input.isKeyPressed(SDL_SCANCODE_A));
 
-    input.update(); // previous now has A=1
+    nextFrame(input); // buffers cleared, key still held
 
     // Still held but not "just pressed"
     EXPECT_TRUE(input.isKeyDown(SDL_SCANCODE_A));
@@ -201,10 +215,10 @@ TEST_F(InputManagerTest, PressStateLastsOneFrame)
 TEST_F(InputManagerTest, MultipleKeysIndependent)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
-    setKey(SDL_SCANCODE_A, true);
-    setKey(SDL_SCANCODE_W, true);
+    simulateKey(input, SDL_SCANCODE_A, true);
+    simulateKey(input, SDL_SCANCODE_W, true);
 
     EXPECT_TRUE(input.isKeyDown(SDL_SCANCODE_A));
     EXPECT_TRUE(input.isKeyDown(SDL_SCANCODE_W));
@@ -218,15 +232,15 @@ TEST_F(InputManagerTest, MultipleKeysIndependent)
 TEST_F(InputManagerTest, ReleaseOneKeyWhileOtherHeld)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
     // Press A and W
-    setKey(SDL_SCANCODE_A, true);
-    setKey(SDL_SCANCODE_W, true);
-    input.update(); // previous: A=1, W=1
+    simulateKey(input, SDL_SCANCODE_A, true);
+    simulateKey(input, SDL_SCANCODE_W, true);
+    nextFrame(input); // previous: A=1, W=1
 
     // Release only A
-    setKey(SDL_SCANCODE_A, false);
+    simulateKey(input, SDL_SCANCODE_A, false);
 
     EXPECT_FALSE(input.isKeyDown(SDL_SCANCODE_A));
     EXPECT_TRUE(input.isKeyReleased(SDL_SCANCODE_A));
@@ -239,28 +253,28 @@ TEST_F(InputManagerTest, ReleaseOneKeyWhileOtherHeld)
 TEST_F(InputManagerTest, FullPressHoldReleaseCycle)
 {
     InputManager input;
-    input.update(); // Frame 0: baseline
+    nextFrame(input); // Frame 0: baseline
 
     // Frame 1: press
-    setKey(SDL_SCANCODE_SPACE, true);
+    simulateKey(input, SDL_SCANCODE_SPACE, true);
     EXPECT_TRUE(input.isKeyDown(SDL_SCANCODE_SPACE));
     EXPECT_TRUE(input.isKeyPressed(SDL_SCANCODE_SPACE));
     EXPECT_FALSE(input.isKeyReleased(SDL_SCANCODE_SPACE));
 
     // Frame 2: hold
-    input.update();
+    nextFrame(input);
     EXPECT_TRUE(input.isKeyDown(SDL_SCANCODE_SPACE));
     EXPECT_FALSE(input.isKeyPressed(SDL_SCANCODE_SPACE));
     EXPECT_FALSE(input.isKeyReleased(SDL_SCANCODE_SPACE));
 
     // Frame 3: release
-    setKey(SDL_SCANCODE_SPACE, false);
+    simulateKey(input, SDL_SCANCODE_SPACE, false);
     EXPECT_FALSE(input.isKeyDown(SDL_SCANCODE_SPACE));
     EXPECT_FALSE(input.isKeyPressed(SDL_SCANCODE_SPACE));
     EXPECT_TRUE(input.isKeyReleased(SDL_SCANCODE_SPACE));
 
     // Frame 4: idle
-    input.update();
+    nextFrame(input);
     EXPECT_FALSE(input.isKeyDown(SDL_SCANCODE_SPACE));
     EXPECT_FALSE(input.isKeyPressed(SDL_SCANCODE_SPACE));
     EXPECT_FALSE(input.isKeyReleased(SDL_SCANCODE_SPACE));
@@ -269,7 +283,7 @@ TEST_F(InputManagerTest, FullPressHoldReleaseCycle)
 TEST_F(InputManagerTest, UnrelatedKeysNotAffected)
 {
     InputManager input;
-    input.update();
+    nextFrame(input);
 
     setKey(SDL_SCANCODE_A, true);
 

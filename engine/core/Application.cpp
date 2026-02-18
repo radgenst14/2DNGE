@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Timer.h"
 #include "SceneManager.h"
+#include "InputManager.h"
 #include "../renderer/Renderer.h"
 #include "../../game/scenes/PhysicsTestScene.h"
 
@@ -42,6 +43,15 @@ Application::Application()
         return;
     }
 
+    // Initialize the input manager
+    mInputManager = std::make_shared<InputManager>();
+
+    if (!mInputManager)
+    {
+        SDL_Log("Failed to create input manager: %s", SDL_GetError());
+        return;
+    }
+
     // Set the initial scene to the PhysicsTestScene
     mSceneManager->setScene(std::make_unique<PhysicsTestScene>());
 
@@ -67,15 +77,20 @@ void Application::run()
 
     while (mIsRunning)
     {
+        // Clear previous frame's input buffers
+        mInputManager->clearBuffers();
+
         // Update the timer and calculate the time since the last frame
         mTimer.tick();
         double frameTime = mTimer.getDeltaTime();
         accumulator += frameTime;
 
-        // Handle input and update the application state at fixed intervals
+        // Poll events and update key state
+        handleInput();
+
+        // Update the application state at fixed intervals
         while (accumulator >= FIXED_DT)
         {
-            handleInput();    // Handle input events via SDL_PollEvent
             update(FIXED_DT); // Update application state (e.g., game logic, physics) at a fixed rate
             accumulator -= FIXED_DT;
         }
@@ -96,6 +111,8 @@ void Application::handleInput()
         {
             mIsRunning = false;
         }
+
+        mInputManager->processEvent(event);
     }
 }
 
