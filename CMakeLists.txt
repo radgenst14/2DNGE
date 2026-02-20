@@ -36,6 +36,27 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(enet)
 
+# Python3 (needed for embedding)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
+# Derive the Python home (prefix) from the real executable path
+get_target_property(_Python3_LOCATION Python3::Interpreter IMPORTED_LOCATION)
+get_filename_component(PYTHON_HOME_DIR "${_Python3_LOCATION}" DIRECTORY)
+
+# Generate a config header so the engine knows where Python lives at runtime
+configure_file(
+    ${CMAKE_SOURCE_DIR}/engine/scripting/ScriptingConfig.h.in
+    ${CMAKE_BINARY_DIR}/generated/ScriptingConfig.h
+)
+
+# pybind11 (C++/Python bridge)
+FetchContent_Declare(
+  pybind11
+  GIT_REPOSITORY https://github.com/pybind/pybind11.git
+  GIT_TAG v2.13.6
+)
+FetchContent_MakeAvailable(pybind11)
+
 # Dear ImGui (no CMake build — we compile it ourselves)
 FetchContent_Declare(
   imgui

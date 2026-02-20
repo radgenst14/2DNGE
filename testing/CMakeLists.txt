@@ -18,13 +18,21 @@ target_link_libraries(2dnge_tests
     GTest::gtest_main
 )
 
-include(GoogleTest)
-
-# Copy SDL2 DLL next to the test executable so it can be found at runtime
-add_custom_command(TARGET 2dnge_tests POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:SDL2::SDL2>
-        $<TARGET_FILE_DIR:2dnge_tests>
+# Provide the project root so tests can locate data files by absolute path
+target_compile_definitions(2dnge_tests PRIVATE
+    PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 )
 
-gtest_discover_tests(2dnge_tests)
+include(GoogleTest)
+
+# Copy all runtime DLLs (SDL2, Python, etc.) next to the test executable
+add_custom_command(TARGET 2dnge_tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_RUNTIME_DLLS:2dnge_tests>
+        $<TARGET_FILE_DIR:2dnge_tests>
+    COMMAND_EXPAND_LISTS
+)
+
+# Use PRE_TEST discovery so CMake doesn't try to run the executable at build
+# time (before DLLs like SDL2 and Python are in place).
+gtest_discover_tests(2dnge_tests DISCOVERY_MODE PRE_TEST)

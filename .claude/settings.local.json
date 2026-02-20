@@ -17,7 +17,12 @@
       "Bash(ctest:*)",
       "Bash(./build/testing/Debug/2dnge_tests.exe:*)",
       "Bash(git commit:*)",
-      "Bash(xxd:*)"
+      "Bash(xxd:*)",
+      "Bash(\"c:/Users/tucke/OneDrive/Desktop/CSE/2DNGE/build/testing/Debug/2dnge_tests.exe\" --gtest_list_tests)",
+      "Bash(echo:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(\"C:/Program Files/CMake/bin/cmake.exe\" --version)"
     ]
   }
 }

@@ -1,0 +1,8 @@
+#ifndef SCRIPTINGCONFIG_H
+#define SCRIPTINGCONFIG_H
+
+#pragma once
+
+#define PYTHON_HOME "@PYTHON_HOME_DIR@"
+
+#endif

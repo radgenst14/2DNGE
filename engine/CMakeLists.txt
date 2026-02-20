@@ -31,9 +31,14 @@ add_library(2dnge_engine
     renderer/AssetManager.h
     renderer/helpers/SpriteRenderer.cpp
     renderer/helpers/SpriteRenderer.h
+    scripting/ScriptEngine.cpp
+    scripting/ScriptEngine.h
 )
 
-target_include_directories(2dnge_engine PUBLIC ${CMAKE_SOURCE_DIR})
+target_include_directories(2dnge_engine PUBLIC
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}/generated
+)
 
 # Link all dependencies
 target_link_libraries(2dnge_engine PUBLIC
@@ -41,4 +46,6 @@ target_link_libraries(2dnge_engine PUBLIC
     glm::glm
     enet
     imgui
+    pybind11::embed
+    Python3::Python
 )
