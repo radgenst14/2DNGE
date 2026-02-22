@@ -28,6 +28,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(SDL2)
 
+# SDL2_image (fetched from source)
+set(SDL2IMAGE_INSTALL OFF CACHE BOOL "" FORCE)
+set(SDL2IMAGE_SAMPLES OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+  SDL2_image
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+  GIT_TAG release-2.8.4
+)
+FetchContent_MakeAvailable(SDL2_image)
+
 # ENet (fetched from source)
 FetchContent_Declare(
   enet

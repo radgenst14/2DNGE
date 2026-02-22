@@ -50,6 +50,12 @@ public:
         return static_cast<const ComponentPool<T> *>(mPools[id].get())->has(entity);
     }
 
+    template <typename T, typename... Args>
+    bool hasAllComponents(EntityID entity) const
+    {
+        return (hasComponent<T>(entity) && ...);
+    }
+
     template <typename T>
     ComponentPool<T> &getComponentPool()
     {
@@ -62,7 +68,36 @@ public:
         return getPool<T>();
     }
 
+    template <typename... Components>
+    View<Components...> view() const
+    {
+        const std::vector<EntityID> *smallest = nullptr;
+        size_t smallestSize = SIZE_MAX;
+        (findSmallestPool<Components>(smallest, smallestSize), ...);
+        return View<Components...>(*this, *smallest);
+    }
+
 private:
+    template <typename T>
+    void findSmallestPool(const std::vector<EntityID> *&smallest, size_t &smallestSize) const
+    {
+        ComponentTypeID id = getComponentTypeID<T>();
+        if (id < mPools.size() && mPools[id])
+        {
+            size_t s = mPools[id]->size();
+            if (s < smallestSize)
+            {
+                smallestSize = s;
+                smallest = &mPools[id]->entities();
+            }
+        }
+        else
+        {
+            smallestSize = 0;
+            smallest = &mEmptyEntities;
+        }
+    }
+
     template <typename T>
     ComponentPool<T> &getOrCreatePool()
     {
@@ -88,6 +123,9 @@ private:
 
     EntityID mNextEntityID = 0;
     std::vector<std::unique_ptr<IComponentPool>> mPools;
+    std::vector<EntityID> mEmptyEntities;
 };
+
+#include "View.h"
 
 #endif

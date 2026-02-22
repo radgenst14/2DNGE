@@ -14,6 +14,8 @@ public:
     virtual ~IComponentPool() = default;
     virtual bool has(EntityID entity) const = 0;
     virtual bool remove(EntityID entity) = 0;
+    virtual size_t size() const = 0;
+    virtual const std::vector<EntityID> &entities() const = 0;
 };
 
 template <typename T>
@@ -50,6 +52,9 @@ public:
     {
         return entity < mSparse.size() && mSparse[entity] != INVALID;
     }
+
+    size_t size() const override { return mDense.size(); }
+    const std::vector<EntityID> &entities() const override { return mDenseToEntity; }
 
     bool remove(EntityID entity)
     {

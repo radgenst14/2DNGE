@@ -5,8 +5,9 @@ add_library(2dnge_engine
     ecs/ComponentTypeID.h
     ecs/ComponentPool.h
     ecs/components/Collider.h
-    ecs/components/Transform.h
     ecs/components/RigidBody.h
+    ecs/components/Sprite.h
+    ecs/components/Transform.h
     core/Window.cpp
     core/Window.h
     core/Application.cpp
@@ -53,6 +54,7 @@ target_include_directories(2dnge_engine PUBLIC
 # Link all dependencies
 target_link_libraries(2dnge_engine PUBLIC
     SDL2::SDL2
+    SDL2_image::SDL2_image
     glm::glm
     enet
     imgui

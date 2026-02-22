@@ -61,6 +61,12 @@ public:
      */
     void drawRect(const ECS::Transform &transform, int width, int height);
 
+    /**
+     * @brief Get the underlying SDL_Renderer pointer.
+     * @return SDL_Renderer*
+     */
+    SDL_Renderer *getSDLRenderer() const { return mRenderer; }
+
 private:
     SDL_Renderer *mRenderer = nullptr; /**< The SDL renderer associated with this class */
 };
