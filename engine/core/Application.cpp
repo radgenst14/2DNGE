@@ -4,7 +4,7 @@
 #include "SceneManager.h"
 #include "InputManager.h"
 #include "../renderer/Renderer.h"
-#include "../../game/scenes/PhysicsTestScene.h"
+#include "../scripting/ScriptableScene.h"
 
 Application::Application()
 {
@@ -53,7 +53,7 @@ Application::Application()
     }
 
     // Set the initial scene to the PhysicsTestScene
-    mSceneManager->setScene(std::make_unique<PhysicsTestScene>());
+    mSceneManager->setScene(std::make_unique<ScriptableScene>("../game/scenes/MainScene.py"));
 
     // Set the application as running
     mIsRunning = true;

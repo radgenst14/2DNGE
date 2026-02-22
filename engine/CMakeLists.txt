@@ -31,8 +31,18 @@ add_library(2dnge_engine
     renderer/AssetManager.h
     renderer/helpers/SpriteRenderer.cpp
     renderer/helpers/SpriteRenderer.h
+    scripting/EngineBindings.cpp
+    scripting/EngineBindings.h
+    scripting/ScriptableScene.cpp
+    scripting/ScriptableScene.h
     scripting/ScriptEngine.cpp
     scripting/ScriptEngine.h
+    scripting/bindings/ECSBindings.cpp
+    scripting/bindings/ECSBindings.h
+    scripting/bindings/PhysicsBindings.cpp
+    scripting/bindings/PhysicsBindings.h
+    scripting/bindings/RenderBindings.cpp
+    scripting/bindings/RenderBindings.h
 )
 
 target_include_directories(2dnge_engine PUBLIC

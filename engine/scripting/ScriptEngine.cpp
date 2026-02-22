@@ -49,7 +49,16 @@ ScriptEngine::~ScriptEngine()
 
 py::object ScriptEngine::execute(const std::string &code)
 {
-    return py::eval(code);
+    try
+    {
+        return py::eval(code);
+    }
+    catch (const py::error_already_set &)
+    {
+        // If eval fails (e.g. for statements like import), try exec instead
+        py::exec(code);
+        return py::none();
+    }
 }
 
 bool ScriptEngine::loadScript(const std::string &path)

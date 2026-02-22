@@ -1,5 +1,4 @@
 #include "SceneManager.h"
-#include "../../game/scenes/PhysicsTestScene.h"
 
 void SceneManager::setScene(std::unique_ptr<IScene> scene)
 {
