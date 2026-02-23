@@ -25,6 +25,8 @@ public:
     void render();
     void renderSprites();
 
+    AssetManager *getAssetManager() const { return mAssetManager.get(); }
+
 private:
     std::unique_ptr<Renderer> mRenderer;             ///< Unique pointer to the Renderer, responsible for all rendering operations.
     std::unique_ptr<SpriteRenderer> mSpriteRenderer; ///< Unique pointer to the SpriteRenderer, responsible for drawing sprites using the Renderer and AssetManager.

@@ -1,6 +1,6 @@
 #include "ScriptableScene.h"
 #include "../core/Window.h"
-#include "../ecs/EntityManager.h"
+#include "../core/ecs/EntityManager.h"
 #include "../physics/PhysicsManager.h"
 #include "../renderer/RenderManager.h"
 
@@ -29,6 +29,7 @@ void ScriptableScene::init()
     {
         mRenderManager = std::make_unique<RenderManager>(mWindow, mEntityManager.get());
         EngineBindings::setRenderManager(mRenderManager.get());
+        EngineBindings::setAssetManager(mRenderManager->getAssetManager());
     }
 
     EngineBindings::setEntityManager(mEntityManager.get());
@@ -64,6 +65,7 @@ void ScriptableScene::cleanup()
     EngineBindings::setEntityManager(nullptr);
     EngineBindings::setPhysicsManager(nullptr);
     EngineBindings::setRenderManager(nullptr);
+    EngineBindings::setAssetManager(nullptr);
 
     // Destroy managers that reference EntityManager first
     mRenderManager.reset();

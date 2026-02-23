@@ -1,5 +1,5 @@
 add_executable(2dnge_app main.cpp)
-target_link_libraries(2dnge_app PRIVATE 2dnge_engine 2dnge_game SDL2::SDL2main)
+target_link_libraries(2dnge_app PRIVATE 2dnge_engine SDL2::SDL2main)
 
 # Copy runtime DLLs next to the app executable so they can be found at runtime
 add_custom_command(TARGET 2dnge_app POST_BUILD

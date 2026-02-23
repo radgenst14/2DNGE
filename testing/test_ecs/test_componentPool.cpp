@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "engine/ecs/ComponentPool.h"
+#include "engine/core/ecs/ComponentPool.h"
 
 TEST(ComponentPoolTest, AddAndGet)
 {

@@ -1,8 +1,10 @@
 #include "ECSBindings.h"
-#include "../../ecs/EntityManager.h"
-#include "../../ecs/components/Transform.h"
-#include "../../ecs/components/RigidBody.h"
 #include "../EngineBindings.h"
+#include "../../core/ecs/EntityManager.h"
+#include "../../core/ecs/components/Transform.h"
+#include "../../core/ecs/components/RigidBody.h"
+#include "../../core/ecs/components/Sprite.h"
+#include "../../renderer/AssetManager.h"
 
 void registerECSBindings(py::module_ &m)
 {
@@ -26,4 +28,23 @@ void registerECSBindings(py::module_ &m)
             {
         auto &t = EngineBindings::getEntityManager()->getComponent<ECS::Transform>(entity);
         return py::make_tuple(t.position.x, t.position.y); }, "Get the position of an entity's Transform component.");
+
+      m.def("add_sprite", [](EntityID entity, const std::string &textureId, int width, int height)
+            {
+        auto *assetManager = EngineBindings::getAssetManager();
+        if (!assetManager || !assetManager->hasTexture(textureId))
+        {
+            throw std::runtime_error("Texture not found: '" + textureId + "'. Load it first with load_texture().");
+        }
+
+        if (width == 0 || height == 0)
+        {
+            assetManager->getTextureDimensions(textureId, width, height);
+        }
+
+        ECS::Sprite sprite{};
+        sprite.textureId = textureId;
+        sprite.width = width;
+        sprite.height = height;
+        EngineBindings::getEntityManager()->addComponent(entity, sprite); }, "Add a Sprite component to an entity. Width/height auto-filled from texture if omitted.", py::arg("entity"), py::arg("texture_id"), py::arg("width") = 0, py::arg("height") = 0);
 }

@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include "engine/scripting/ScriptableScene.h"
 #include "engine/scripting/EngineBindings.h"
-#include "engine/ecs/EntityManager.h"
-#include "engine/ecs/components/Transform.h"
-#include "engine/ecs/components/RigidBody.h"
+#include "engine/core/ecs/EntityManager.h"
+#include "engine/core/ecs/components/Transform.h"
+#include "engine/core/ecs/components/RigidBody.h"
 #include <string>
 
 static const std::string SCRIPTS_DIR =

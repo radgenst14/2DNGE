@@ -1,7 +1,7 @@
 #include "CollisionDetector.h"
-#include "../ecs/EntityManager.h"
-#include "../ecs/components/Collider.h"
-#include "../ecs/components/Transform.h"
+#include "../core/ecs/EntityManager.h"
+#include "../core/ecs/components/Collider.h"
+#include "../core/ecs/components/Transform.h"
 
 CollisionDetector::~CollisionDetector()
 {

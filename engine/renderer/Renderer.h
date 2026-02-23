@@ -4,7 +4,7 @@
 #pragma once
 
 #include <SDL.h>
-#include "../ecs/components/Transform.h"
+#include "../core/ecs/components/Transform.h"
 
 class Window;
 

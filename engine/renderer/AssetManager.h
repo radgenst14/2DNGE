@@ -29,6 +29,15 @@ public:
     SDL_Texture *loadTexture(const std::string &id, const std::string &filePath);
 
     /**
+     * @brief Load a texture from an Aseprite (.ase/.aseprite) file.
+     *        Uses the first frame of the animation.
+     * @param id Unique string key used to retrieve the texture later.
+     * @param filePath Path to the .aseprite file on disk.
+     * @return The loaded SDL_Texture*, or nullptr on failure.
+     */
+    SDL_Texture *loadAseprite(const std::string &id, const std::string &filePath);
+
+    /**
      * @brief Retrieve a previously loaded texture by its ID.
      * @param id The key the texture was loaded under.
      * @return The SDL_Texture*, or nullptr if not found.
@@ -52,6 +61,15 @@ public:
      * @return true if the texture exists in the cache.
      */
     bool hasTexture(const std::string &id) const;
+
+    /**
+     * @brief Get the width and height of a loaded texture.
+     * @param id The key the texture was loaded under.
+     * @param width Output parameter for the texture width in pixels.
+     * @param height Output parameter for the texture height in pixels.
+     * @return true if the texture was found and dimensions were retrieved.
+     */
+    bool getTextureDimensions(const std::string &id, int &width, int &height) const;
 
 private:
     Renderer *mRenderer;

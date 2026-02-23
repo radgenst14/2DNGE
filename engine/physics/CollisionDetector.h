@@ -4,8 +4,8 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "../ecs/ComponentTypeID.h"
-#include "../ecs/components/Collider.h"
+#include "../core/ecs/ComponentTypeID.h"
+#include "../core/ecs/components/Collider.h"
 
 class EntityManager;
 

@@ -23,6 +23,22 @@ def get_position(entity: int) -> Tuple[float, float]:
     """Get the position of an entity's Transform component."""
     ...
 
+def add_sprite(entity: int, texture_id: str, width: int = 0, height: int = 0) -> None:
+    """Add a Sprite component to an entity. Width/height auto-filled from texture if omitted."""
+    ...
+
+# -- Assets -------------------------------------------------
+
+PROJECT_ROOT: str
+
+def load_texture(id: str, path: str) -> None:
+    """Load a texture from a file and store it with a unique ID."""
+    ...
+
+def load_aseprite(id: str, path: str) -> None:
+    """Load an .aseprite file and store it as a texture with a unique ID."""
+    ...
+
 # -- Physics ------------------------------------------------
 
 def physics_update(dt: float) -> None:

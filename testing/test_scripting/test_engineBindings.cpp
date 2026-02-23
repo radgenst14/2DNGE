@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include "engine/scripting/ScriptEngine.h"
 #include "engine/scripting/EngineBindings.h"
-#include "engine/ecs/EntityManager.h"
-#include "engine/ecs/components/Transform.h"
-#include "engine/ecs/components/RigidBody.h"
+#include "engine/core/ecs/EntityManager.h"
+#include "engine/core/ecs/components/Transform.h"
+#include "engine/core/ecs/components/RigidBody.h"
 #include "engine/core/InputManager.h"
 
 class EngineBindingsTest : public ::testing::Test
@@ -181,4 +181,22 @@ TEST_F(EngineBindingsTest, RenderAttrExistsInPython)
 {
     se.execute("import engine");
     EXPECT_TRUE(se.execute("hasattr(engine, 'render')").cast<bool>());
+}
+
+// ===========================================================================
+// Sprite bindings
+// ===========================================================================
+
+TEST_F(EngineBindingsTest, AddSpriteAttrExistsInPython)
+{
+    se.execute("import engine");
+    EXPECT_TRUE(se.execute("hasattr(engine, 'add_sprite')").cast<bool>());
+}
+
+TEST_F(EngineBindingsTest, AddSpriteThrowsOnMissingTexture)
+{
+    se.execute("import engine");
+    se.execute("e = engine.create_entity()");
+
+    EXPECT_THROW(se.execute("engine.add_sprite(e, 'nonexistent')"), py::error_already_set);
 }

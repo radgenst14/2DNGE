@@ -3,8 +3,6 @@
 #include "Timer.h"
 #include "SceneManager.h"
 #include "InputManager.h"
-#include "../scripting/ScriptableScene.h"
-#include "ScriptingConfig.h"
 
 #include <string>
 
@@ -43,10 +41,6 @@ Application::Application()
         SDL_Log("Failed to create input manager: %s", SDL_GetError());
         return;
     }
-
-    // Set the initial scene
-    std::string scriptPath = std::string(PROJECT_ROOT) + "/game/scenes/MainScene.py";
-    mSceneManager->setScene(std::make_unique<ScriptableScene>(scriptPath, mWindow.get()));
 
     // Set the application as running
     mIsRunning = true;

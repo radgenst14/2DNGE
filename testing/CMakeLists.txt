@@ -13,7 +13,6 @@ file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "test_*/*.cpp")
 add_executable(2dnge_tests ${TEST_SOURCES})
 
 target_link_libraries(2dnge_tests
-    2dnge_game
     2dnge_engine
     GTest::gtest_main
 )

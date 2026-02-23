@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "engine/ecs/components/Collider.h"
-#include "engine/ecs/components/Transform.h"
+#include "engine/core/ecs/components/Collider.h"
+#include "engine/core/ecs/components/Transform.h"
 #include "engine/physics/CollisionDetector.h"
-#include "engine/ecs/EntityManager.h"
+#include "engine/core/ecs/EntityManager.h"
 
 class CollisionTest : public ::testing::Test
 {

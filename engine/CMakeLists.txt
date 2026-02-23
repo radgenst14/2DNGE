@@ -1,13 +1,13 @@
 # Collect all engine source files
 add_library(2dnge_engine STATIC
-    ecs/EntityManager.cpp
-    ecs/EntityManager.h
-    ecs/ComponentTypeID.h
-    ecs/ComponentPool.h
-    ecs/components/Collider.h
-    ecs/components/RigidBody.h
-    ecs/components/Sprite.h
-    ecs/components/Transform.h
+    core/ecs/EntityManager.cpp
+    core/ecs/EntityManager.h
+    core/ecs/ComponentTypeID.h
+    core/ecs/ComponentPool.h
+    core/ecs/components/Collider.h
+    core/ecs/components/RigidBody.h
+    core/ecs/components/Sprite.h
+    core/ecs/components/Transform.h
     core/Window.cpp
     core/Window.h
     core/Application.cpp
@@ -38,12 +38,16 @@ add_library(2dnge_engine STATIC
     scripting/ScriptableScene.h
     scripting/ScriptEngine.cpp
     scripting/ScriptEngine.h
+    scripting/bindings/AssetBindings.cpp
+    scripting/bindings/AssetBindings.h
     scripting/bindings/ECSBindings.cpp
     scripting/bindings/ECSBindings.h
     scripting/bindings/PhysicsBindings.cpp
     scripting/bindings/PhysicsBindings.h
     scripting/bindings/RenderBindings.cpp
     scripting/bindings/RenderBindings.h
+    vendor/cute_aseprite.cpp
+    vendor/cute_aseprite.h
 )
 
 target_include_directories(2dnge_engine PUBLIC

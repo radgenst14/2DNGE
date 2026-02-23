@@ -30,6 +30,9 @@ public:
     /** @brief Runs the main application loop, handling events and updating the application state. */
     void run();
 
+    SceneManager *getSceneManager() const { return mSceneManager.get(); }
+    Window *getWindow() const { return mWindow.get(); }
+
     /** @brief  Methods for handling input, updating the application state, and rendering the application. */
     void handleInput();
     void update(float dt);

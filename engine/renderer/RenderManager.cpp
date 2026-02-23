@@ -2,10 +2,10 @@
 #include "Renderer.h"
 #include "AssetManager.h"
 #include "helpers/SpriteRenderer.h"
-#include "../ecs/EntityManager.h"
-#include "../ecs/components/Sprite.h"
-#include "../ecs/components/Transform.h"
-#include "../ecs/ComponentTypeID.h"
+#include "../core/ecs/EntityManager.h"
+#include "../core/ecs/components/Sprite.h"
+#include "../core/ecs/components/Transform.h"
+#include "../core/ecs/ComponentTypeID.h"
 
 RenderManager::RenderManager(Window *window, EntityManager *entityManager)
     : mEntityManager(entityManager)

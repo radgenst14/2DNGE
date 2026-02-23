@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "engine/ecs/EntityManager.h"
-#include "engine/ecs/components/Transform.h"
-#include "engine/ecs/components/RigidBody.h"
-#include "engine/ecs/components/Collider.h"
+#include "engine/core/ecs/EntityManager.h"
+#include "engine/core/ecs/components/Transform.h"
+#include "engine/core/ecs/components/RigidBody.h"
+#include "engine/core/ecs/components/Collider.h"
 
 TEST(EntityManagerTest, CreateEntityReturnsUniqueIDs)
 {
