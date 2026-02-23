@@ -6,15 +6,16 @@
 #include <memory>
 #include <SDL.h>
 
-class Renderer;
 class Window;
-class AssetManager;
+class Renderer;
 class SpriteRenderer;
+class AssetManager;
+class EntityManager;
 
 class RenderManager
 {
 public:
-    RenderManager(Window *window);
+    RenderManager(Window *window, EntityManager *entityManager);
     ~RenderManager();
 
     /* Delete  copy constructor and assignment operator */
@@ -26,8 +27,9 @@ public:
 
 private:
     std::unique_ptr<Renderer> mRenderer;             ///< Unique pointer to the Renderer, responsible for all rendering operations.
-    std::unique_ptr<AssetManager> mAssetManager;     ///< Unique pointer to the AssetManager, responsible for loading and managing textures.
     std::unique_ptr<SpriteRenderer> mSpriteRenderer; ///< Unique pointer to the SpriteRenderer, responsible for drawing sprites using the Renderer and AssetManager.
+    std::unique_ptr<AssetManager> mAssetManager;     ///< Unique pointer to the AssetManager, responsible for loading and managing textures.
+    EntityManager *mEntityManager;                    ///< Pointer to the EntityManager, used to access entities and their components for rendering.
 };
 
 #endif

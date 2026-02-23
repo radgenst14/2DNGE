@@ -17,7 +17,7 @@ using namespace std;
 class Window
 {
 public:
-    Window(string *title, int width = 0, int height = 0);
+    Window(const string &title, int width = 0, int height = 0);
     ~Window();
 
     /* Delete copy constructor and assignment operator */
@@ -42,7 +42,7 @@ public:
      * @brief Get the title of the window
      * @return The title of the window
      */
-    string getTitle() const { return *mTitle; };
+    string getTitle() const { return mTitle; };
 
     /**
      * @brief Get the SDL_Window associated with this Window
@@ -51,9 +51,9 @@ public:
     SDL_Window *getWindow() const { return mWindow; };
 
 private:
-    int mWidth;     /**< The width of the window */
-    int mHeight;    /**< The height of the window */
-    string *mTitle; /**< The title of the window */
+    int mWidth;    /**< The width of the window */
+    int mHeight;   /**< The height of the window */
+    string mTitle; /**< The title of the window */
 
     SDL_Window *mWindow = nullptr; /**< The SDL window associated with this class */
 };

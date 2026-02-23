@@ -48,15 +48,9 @@ void PhysicsTestScene::update(float dt)
     mPhysicsManager->update(dt);
 }
 
-void PhysicsTestScene::render(Renderer &renderer)
+void PhysicsTestScene::render()
 {
-    renderer.setDrawColor(255, 255, 255, 255); // Set draw color to white
-    // Render entities with a Transform component
-    for (EntityID entity : mEntityManager->getComponentPool<ECS::Transform>())
-    {
-        const auto &transform = mEntityManager->getComponent<ECS::Transform>(entity);
-        renderer.drawRect(transform, 50, 50); // Draw a rectangle representing the entity
-    }
+    // Needs a RenderManager to render (see ScriptableScene for reference)
 }
 
 void PhysicsTestScene::cleanup()

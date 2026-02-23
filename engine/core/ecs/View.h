@@ -4,18 +4,20 @@
 #pragma once
 
 #include <vector>
-#include "ComponentTypeID.h"
+#include <array>
+#include "ComponentPool.h"
 
 template <typename... Components>
 class View
 {
 public:
-    View(const EntityManager &em, const std::vector<EntityID> &smallest)
-        : mEM(em), mSmallest(smallest) {}
+    View(const std::vector<EntityID> &smallest,
+         std::array<const IComponentPool *, sizeof...(Components)> pools)
+        : mSmallest(smallest), mPools(pools) {}
 
     struct Iterator
     {
-        const EntityManager &em;
+        std::array<const IComponentPool *, sizeof...(Components)> pools;
         typename std::vector<EntityID>::const_iterator it;
         typename std::vector<EntityID>::const_iterator end;
 
@@ -31,26 +33,37 @@ public:
 
         void skipNonMatching()
         {
-            while (it != end && !em.hasAllComponents<Components...>(*it))
+            while (it != end && !hasAll(*it))
                 ++it;
+        }
+
+    private:
+        bool hasAll(EntityID entity) const
+        {
+            for (const IComponentPool *pool : pools)
+            {
+                if (!pool || !pool->has(entity))
+                    return false;
+            }
+            return true;
         }
     };
 
     Iterator begin() const
     {
-        Iterator it{mEM, mSmallest.begin(), mSmallest.end()};
+        Iterator it{mPools, mSmallest.begin(), mSmallest.end()};
         it.skipNonMatching();
         return it;
     }
 
     Iterator end() const
     {
-        return {mEM, mSmallest.end(), mSmallest.end()};
+        return {mPools, mSmallest.end(), mSmallest.end()};
     }
 
 private:
-    const EntityManager &mEM;
     const std::vector<EntityID> &mSmallest;
+    std::array<const IComponentPool *, sizeof...(Components)> mPools;
 };
 
 #endif

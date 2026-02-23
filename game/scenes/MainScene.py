@@ -11,5 +11,11 @@ def init():
 def update(dt):
     engine.physics_update(dt)
 
+def input():
+    pass
+
+def render():
+    engine.render()
+
 def cleanup():
     pass

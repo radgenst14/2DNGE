@@ -4,6 +4,7 @@
 #include "engine/ecs/EntityManager.h"
 #include "engine/ecs/components/Transform.h"
 #include "engine/ecs/components/RigidBody.h"
+#include "engine/core/InputManager.h"
 
 class EngineBindingsTest : public ::testing::Test
 {
@@ -19,6 +20,9 @@ protected:
     void TearDown() override
     {
         EngineBindings::setEntityManager(nullptr);
+        EngineBindings::setPhysicsManager(nullptr);
+        EngineBindings::setRenderManager(nullptr);
+        EngineBindings::setInputManager(nullptr);
     }
 };
 
@@ -81,4 +85,100 @@ TEST_F(EngineBindingsTest, FullScriptCreatesEntity)
     auto &t = em.getComponent<ECS::Transform>(0);
     EXPECT_FLOAT_EQ(t.position.x, 50.0f);
     EXPECT_FLOAT_EQ(t.position.y, 75.0f);
+}
+
+// ===========================================================================
+// InputManager bindings
+// ===========================================================================
+
+TEST_F(EngineBindingsTest, SetAndGetInputManager)
+{
+    InputManager im;
+    EngineBindings::setInputManager(&im);
+
+    EXPECT_EQ(EngineBindings::getInputManager(), &im);
+
+    EngineBindings::setInputManager(nullptr);
+    EXPECT_EQ(EngineBindings::getInputManager(), nullptr);
+}
+
+TEST_F(EngineBindingsTest, InputManagerInitiallyNull)
+{
+    // TearDown resets it, so at the start of each test it should be null
+    // (unless SetUp sets it). InputManager is not set in SetUp.
+    EXPECT_EQ(EngineBindings::getInputManager(), nullptr);
+}
+
+// ===========================================================================
+// RenderManager bindings
+// ===========================================================================
+
+TEST_F(EngineBindingsTest, SetAndGetRenderManager)
+{
+    // We can't easily create a real RenderManager without a Window/SDL.
+    // But we can test the set/get with nullptr round-trip.
+    EngineBindings::setRenderManager(nullptr);
+    EXPECT_EQ(EngineBindings::getRenderManager(), nullptr);
+}
+
+TEST_F(EngineBindingsTest, RenderManagerInitiallyNull)
+{
+    EXPECT_EQ(EngineBindings::getRenderManager(), nullptr);
+}
+
+// ===========================================================================
+// PhysicsManager bindings
+// ===========================================================================
+
+TEST_F(EngineBindingsTest, SetAndGetPhysicsManager)
+{
+    EngineBindings::setPhysicsManager(nullptr);
+    EXPECT_EQ(EngineBindings::getPhysicsManager(), nullptr);
+}
+
+// ===========================================================================
+// Multiple bindings coexist
+// ===========================================================================
+
+TEST_F(EngineBindingsTest, AllBindingsCoexist)
+{
+    InputManager im;
+
+    EngineBindings::setEntityManager(&em);
+    EngineBindings::setInputManager(&im);
+
+    // All should be independently accessible
+    EXPECT_EQ(EngineBindings::getEntityManager(), &em);
+    EXPECT_EQ(EngineBindings::getInputManager(), &im);
+
+    // Clearing one doesn't affect the other
+    EngineBindings::setInputManager(nullptr);
+    EXPECT_EQ(EngineBindings::getEntityManager(), &em);
+    EXPECT_EQ(EngineBindings::getInputManager(), nullptr);
+}
+
+// ===========================================================================
+// Python render binding is registered
+// ===========================================================================
+
+TEST_F(EngineBindingsTest, RenderFunctionExistsInPython)
+{
+    // The render() function should be available in the engine module
+    // even if RenderManager is null (it should handle null gracefully)
+    se.execute("import engine");
+    // Calling engine.render() with null RenderManager should not crash
+    se.execute("engine.render()");
+}
+
+TEST_F(EngineBindingsTest, PhysicsUpdateExistsInPython)
+{
+    // physics_update requires a valid PhysicsManager; just verify it's importable
+    se.execute("import engine");
+    EXPECT_TRUE(se.execute("hasattr(engine, 'physics_update')").cast<bool>());
+}
+
+TEST_F(EngineBindingsTest, RenderAttrExistsInPython)
+{
+    se.execute("import engine");
+    EXPECT_TRUE(se.execute("hasattr(engine, 'render')").cast<bool>());
 }

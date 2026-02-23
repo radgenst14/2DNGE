@@ -3,8 +3,10 @@
 #include "Timer.h"
 #include "SceneManager.h"
 #include "InputManager.h"
-#include "../renderer/Renderer.h"
 #include "../scripting/ScriptableScene.h"
+#include "ScriptingConfig.h"
+
+#include <string>
 
 Application::Application()
 {
@@ -16,21 +18,11 @@ Application::Application()
     }
 
     // Create a window with the specified title, width, and height
-    auto title = new string("2DNGE");
-    mWindow = std::shared_ptr<Window>(new Window(title, 800, 600));
+    mWindow = std::make_shared<Window>("2DNGE", 800, 600);
 
     if (!mWindow->getWindow())
     {
         SDL_Log("Failed to create window: %s", SDL_GetError());
-        return;
-    }
-
-    // Create a renderer for the window
-    mRenderer = std::make_shared<Renderer>(mWindow.get());
-
-    if (!mRenderer)
-    {
-        SDL_Log("Failed to create renderer: %s", SDL_GetError());
         return;
     }
 
@@ -52,8 +44,9 @@ Application::Application()
         return;
     }
 
-    // Set the initial scene to the PhysicsTestScene
-    mSceneManager->setScene(std::make_unique<ScriptableScene>("../game/scenes/MainScene.py"));
+    // Set the initial scene
+    std::string scriptPath = std::string(PROJECT_ROOT) + "/game/scenes/MainScene.py";
+    mSceneManager->setScene(std::make_unique<ScriptableScene>(scriptPath, mWindow.get()));
 
     // Set the application as running
     mIsRunning = true;
@@ -61,6 +54,9 @@ Application::Application()
 
 Application::~Application()
 {
+    // Destroy all SDL-dependent objects before calling SDL_Quit
+    mSceneManager.reset();
+    mInputManager.reset();
     mWindow.reset();
     SDL_Quit();
 }
@@ -123,11 +119,5 @@ void Application::update(float dt)
 
 void Application::render()
 {
-    mRenderer->setDrawColor(0, 0, 0, 255); // Set draw color to black
-    mRenderer->clear();                    // Clear the screen before rendering
-
-    // Render the active scene
-    mSceneManager->getActiveScene()->render(*mRenderer);
-
-    mRenderer->present(); // Present the rendered frame to the screen
+    mSceneManager->getActiveScene()->render();
 }

@@ -49,9 +49,13 @@ FetchContent_MakeAvailable(enet)
 # Python3 (needed for embedding)
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-# Derive the Python home (prefix) from the real executable path
-get_target_property(_Python3_LOCATION Python3::Interpreter IMPORTED_LOCATION)
-get_filename_component(PYTHON_HOME_DIR "${_Python3_LOCATION}" DIRECTORY)
+# Derive the Python home from sys.base_prefix (works correctly with virtualenvs)
+execute_process(
+    COMMAND ${Python3_EXECUTABLE} -c "import sys; print(sys.base_prefix, end='')"
+    OUTPUT_VARIABLE PYTHON_HOME_DIR
+)
+# Convert backslashes to forward slashes so the C #define doesn't have escape issues
+string(REPLACE "\\" "/" PYTHON_HOME_DIR "${PYTHON_HOME_DIR}")
 
 # Generate a config header so the engine knows where Python lives at runtime
 configure_file(
@@ -101,3 +105,28 @@ add_subdirectory(app)
 
 enable_testing()
 add_subdirectory(testing)
+
+# ── Stub generation ─────────────────────────────────
+set(BINDING_SOURCES
+    ${CMAKE_SOURCE_DIR}/engine/scripting/bindings/ECSBindings.cpp
+    ${CMAKE_SOURCE_DIR}/engine/scripting/bindings/PhysicsBindings.cpp
+    ${CMAKE_SOURCE_DIR}/engine/scripting/bindings/RenderBindings.cpp
+    ${CMAKE_SOURCE_DIR}/engine/scripting/bindings/InputBindings.cpp
+)
+
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/game/engine.pyi
+    COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_SOURCE_DIR}/tools/generate_stubs.py
+        --output ${CMAKE_SOURCE_DIR}/game/engine.pyi
+        ${BINDING_SOURCES}
+    DEPENDS
+        ${BINDING_SOURCES}
+        ${CMAKE_SOURCE_DIR}/tools/generate_stubs.py
+    COMMENT "Generating engine.pyi type stubs"
+    VERBATIM
+)
+
+add_custom_target(generate_stubs ALL
+    DEPENDS ${CMAKE_SOURCE_DIR}/game/engine.pyi
+)

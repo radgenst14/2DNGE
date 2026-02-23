@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <SDL.h>
 #include "../../engine/core/SceneManager.h"
-#include "../../engine/renderer/Renderer.h"
 
 // Concrete test scene implementation
 class TestScene : public IScene
@@ -14,7 +13,7 @@ public:
     void init() override { initCalled = true; }
     void input(SDL_Event &) override {}
     void update(float) override { updateCount++; }
-    void render(Renderer &) override {}
+    void render() override {}
     void cleanup() override { cleanupCalled = true; }
 };
 

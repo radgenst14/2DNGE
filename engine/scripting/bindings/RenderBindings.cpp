@@ -2,8 +2,11 @@
 #include "../EngineBindings.h"
 #include "../../renderer/RenderManager.h"
 
-void RegisterRenderBindings(py::module_ &m)
+void registerRenderBindings(py::module_ &m)
 {
-    m.def("graphics_update", []()
-          { return 0; });
+    m.def("render", []()
+          {
+              auto *rm = EngineBindings::getRenderManager();
+              if (rm) rm->render();
+          }, "Render the current frame, including all sprites and other renderable entities.");
 }

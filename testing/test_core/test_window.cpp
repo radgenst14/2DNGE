@@ -3,7 +3,7 @@
 
 TEST(WindowTest, ConstructionWithDefaultSize)
 {
-    Window window(new string("Test"));
+    Window window("Test");
 
     EXPECT_EQ(window.getWidth(), 0);
     EXPECT_EQ(window.getHeight(), 0);
@@ -12,7 +12,7 @@ TEST(WindowTest, ConstructionWithDefaultSize)
 
 TEST(WindowTest, ConstructionWithExplicitSize)
 {
-    Window window(new string("Sized"), 1280, 720);
+    Window window("Sized", 1280, 720);
 
     EXPECT_EQ(window.getWidth(), 1280);
     EXPECT_EQ(window.getHeight(), 720);
@@ -21,14 +21,14 @@ TEST(WindowTest, ConstructionWithExplicitSize)
 
 TEST(WindowTest, GetTitle)
 {
-    Window window(new string("My Title"));
+    Window window("My Title");
 
     EXPECT_EQ(window.getTitle(), "My Title");
 }
 
 TEST(WindowTest, SetWidth)
 {
-    Window window(new string("Test"));
+    Window window("Test");
     window.setWidth(800);
 
     EXPECT_EQ(window.getWidth(), 800);
@@ -36,7 +36,7 @@ TEST(WindowTest, SetWidth)
 
 TEST(WindowTest, SetHeight)
 {
-    Window window(new string("Test"));
+    Window window("Test");
     window.setHeight(600);
 
     EXPECT_EQ(window.getHeight(), 600);
@@ -44,7 +44,7 @@ TEST(WindowTest, SetHeight)
 
 TEST(WindowTest, SetWidthAndHeight)
 {
-    Window window(new string("Test"));
+    Window window("Test");
     window.setWidth(1920);
     window.setHeight(1080);
 
@@ -54,7 +54,7 @@ TEST(WindowTest, SetWidthAndHeight)
 
 TEST(WindowTest, SDLWindowIsCreated)
 {
-    Window window(new string("SDL Check"));
+    Window window("SDL Check");
     SDL_Window *sdlWin = window.getWindow();
 
     ASSERT_NE(sdlWin, nullptr);
@@ -66,7 +66,7 @@ TEST(WindowTest, SDLWindowIsCreated)
 
 TEST(WindowTest, SDLWindowHasCorrectSize)
 {
-    Window window(new string("Size Check"), 640, 480);
+    Window window("Size Check", 640, 480);
 
     int w, h;
     SDL_GetWindowSize(window.getWindow(), &w, &h);

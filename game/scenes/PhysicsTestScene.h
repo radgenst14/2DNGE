@@ -14,7 +14,7 @@ public:
     void init() override;
     void input(SDL_Event &event) override;
     void update(float dt) override;
-    void render(Renderer &renderer) override;
+    void render() override;
     void cleanup() override;
 
 private:

@@ -4,5 +4,6 @@
 #pragma once
 
 #define PYTHON_HOME "@PYTHON_HOME_DIR@"
+#define PROJECT_ROOT "@CMAKE_SOURCE_DIR@"
 
 #endif

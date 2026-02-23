@@ -1,10 +1,10 @@
 #include "Window.h"
 
-Window::Window(string *title, int width, int height)
+Window::Window(const string &title, int width, int height)
     : mTitle(title), mWidth(width), mHeight(height)
 {
     mWindow = SDL_CreateWindow(
-        mTitle->c_str(),
+        mTitle.c_str(),
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         mWidth,

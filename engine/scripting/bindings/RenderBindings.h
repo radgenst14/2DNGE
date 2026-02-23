@@ -7,6 +7,6 @@
 
 namespace py = pybind11;
 
-void RegisterRenderBindings(py::module_ &m);
+void registerRenderBindings(py::module_ &m);
 
 #endif

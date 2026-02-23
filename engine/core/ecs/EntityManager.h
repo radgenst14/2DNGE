@@ -5,9 +5,11 @@
 
 #include <vector>
 #include <memory>
+#include <array>
 #include <cassert>
 #include "ComponentTypeID.h"
 #include "ComponentPool.h"
+#include "View.h"
 
 class EntityManager
 {
@@ -74,10 +76,24 @@ public:
         const std::vector<EntityID> *smallest = nullptr;
         size_t smallestSize = SIZE_MAX;
         (findSmallestPool<Components>(smallest, smallestSize), ...);
-        return View<Components...>(*this, *smallest);
+
+        std::array<const IComponentPool *, sizeof...(Components)> pools = {
+            getPoolPtr<Components>()...
+        };
+
+        return View<Components...>(*smallest, pools);
     }
 
 private:
+    template <typename T>
+    const IComponentPool *getPoolPtr() const
+    {
+        ComponentTypeID id = getComponentTypeID<T>();
+        if (id >= mPools.size() || !mPools[id])
+            return nullptr;
+        return mPools[id].get();
+    }
+
     template <typename T>
     void findSmallestPool(const std::vector<EntityID> *&smallest, size_t &smallestSize) const
     {
@@ -125,7 +141,5 @@ private:
     std::vector<std::unique_ptr<IComponentPool>> mPools;
     std::vector<EntityID> mEmptyEntities;
 };
-
-#include "View.h"
 
 #endif

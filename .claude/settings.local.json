@@ -23,7 +23,11 @@
       "Bash(python3:*)",
       "Bash(python:*)",
       "Bash(\"C:/Program Files/CMake/bin/cmake.exe\" --version)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(./build/app/Debug/2dnge_app.exe:*)",
+      "Bash(./2dnge_app.exe:*)",
+      "Bash(cmd //c:*)",
+      "Bash(git status:*)"
     ]
   }
 }

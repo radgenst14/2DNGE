@@ -1,5 +1,5 @@
 # Collect all engine source files
-add_library(2dnge_engine
+add_library(2dnge_engine STATIC
     ecs/EntityManager.cpp
     ecs/EntityManager.h
     ecs/ComponentTypeID.h
