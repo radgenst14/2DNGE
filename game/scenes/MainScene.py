@@ -13,7 +13,8 @@ def init():
     entity1 = engine.create_entity()
     engine.add_transform(entity1, 100.0, 100.0)
     engine.add_rigidbody(entity1, 50.0, 0.0, 1.0)
-    engine.add_sprite(entity1, "player")
+    engine.add_sprite(entity1, "player", 128, 128)
+    engine.play_animation(entity1, "base")
 
 def update(dt):
     engine.physics_update(dt)

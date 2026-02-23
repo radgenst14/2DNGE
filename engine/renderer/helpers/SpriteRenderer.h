@@ -20,7 +20,8 @@ public:
     SpriteRenderer &operator=(const SpriteRenderer &) = delete;
 
     void drawSprite(const std::string &textureId, int x, int y, int width, int height,
-                    double angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE);
+                    double angle = 0.0, SDL_RendererFlip flip = SDL_FLIP_NONE,
+                    const SDL_Rect *srcRect = nullptr);
 
 private:
     Renderer *mRenderer;         ///< Non-owning pointer to the Renderer, used for drawing sprites.

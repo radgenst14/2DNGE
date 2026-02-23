@@ -52,6 +52,9 @@ void ScriptableScene::input(SDL_Event &event)
 void ScriptableScene::update(float dt)
 {
     mScriptEngine.callFunction("update", dt);
+
+    if (mRenderManager)
+        mRenderManager->updateAnimations(dt);
 }
 
 void ScriptableScene::render()

@@ -24,6 +24,7 @@ public:
 
     void render();
     void renderSprites();
+    void updateAnimations(float dt);
 
     AssetManager *getAssetManager() const { return mAssetManager.get(); }
 

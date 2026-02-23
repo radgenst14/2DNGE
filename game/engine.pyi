@@ -27,6 +27,26 @@ def add_sprite(entity: int, texture_id: str, width: int = 0, height: int = 0) ->
     """Add a Sprite component to an entity. Width/height auto-filled from texture if omitted."""
     ...
 
+def play_animation(entity: int, tag_name: str) -> None:
+    """Play a named animation tag on the entity's sprite."""
+    ...
+
+def pause_animation(entity: int) -> None:
+    """Pause the sprite animation."""
+    ...
+
+def resume_animation(entity: int) -> None:
+    """Resume the sprite animation."""
+    ...
+
+def set_animation_looping(entity: int, looping: bool) -> None:
+    """Set whether the sprite animation loops."""
+    ...
+
+def set_animation_frame(entity: int, frame: int) -> None:
+    """Set the current animation frame index."""
+    ...
+
 # -- Assets -------------------------------------------------
 
 PROJECT_ROOT: str

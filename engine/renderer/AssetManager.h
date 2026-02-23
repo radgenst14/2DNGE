@@ -4,10 +4,28 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <SDL.h>
 
 class Renderer;
+
+struct AnimationTag
+{
+    std::string name;
+    int fromFrame;
+    int toFrame;
+    int direction; // 0=forward, 1=backward, 2=pingpong
+};
+
+struct SpriteSheetData
+{
+    int frameCount{1};
+    int frameWidth{0};
+    int frameHeight{0};
+    std::vector<int> frameDurationsMs;
+    std::vector<AnimationTag> tags;
+};
 
 class AssetManager
 {
@@ -30,12 +48,20 @@ public:
 
     /**
      * @brief Load a texture from an Aseprite (.ase/.aseprite) file.
-     *        Uses the first frame of the animation.
+     *        Single-frame files produce a static texture.
+     *        Multi-frame files produce a horizontal sprite sheet with animation metadata.
      * @param id Unique string key used to retrieve the texture later.
      * @param filePath Path to the .aseprite file on disk.
      * @return The loaded SDL_Texture*, or nullptr on failure.
      */
     SDL_Texture *loadAseprite(const std::string &id, const std::string &filePath);
+
+    /**
+     * @brief Get sprite sheet metadata for a loaded aseprite texture.
+     * @param id The key the texture was loaded under.
+     * @return Pointer to SpriteSheetData, or nullptr if not an aseprite texture.
+     */
+    const SpriteSheetData *getSpriteSheet(const std::string &id) const;
 
     /**
      * @brief Retrieve a previously loaded texture by its ID.
@@ -74,6 +100,7 @@ public:
 private:
     Renderer *mRenderer;
     std::unordered_map<std::string, SDL_Texture *> mTextures;
+    std::unordered_map<std::string, SpriteSheetData> mSpriteSheets;
 };
 
 #endif

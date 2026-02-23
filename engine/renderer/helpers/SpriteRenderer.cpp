@@ -7,7 +7,7 @@ SpriteRenderer::~SpriteRenderer()
 }
 
 void SpriteRenderer::drawSprite(const std::string &textureId, int x, int y, int width, int height,
-                                double angle, SDL_RendererFlip flip)
+                                double angle, SDL_RendererFlip flip, const SDL_Rect *srcRect)
 {
     SDL_Texture *texture = mAssetManager->getTexture(textureId);
     if (!texture)
@@ -17,5 +17,5 @@ void SpriteRenderer::drawSprite(const std::string &textureId, int x, int y, int 
     }
 
     SDL_Rect dst = {x, y, width, height};
-    SDL_RenderCopyEx(mRenderer->getSDLRenderer(), texture, nullptr, &dst, angle, nullptr, flip);
+    SDL_RenderCopyEx(mRenderer->getSDLRenderer(), texture, srcRect, &dst, angle, nullptr, flip);
 }
