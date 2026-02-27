@@ -3,7 +3,7 @@
 DO NOT EDIT -- regenerate with: python tools/generate_stubs.py
 """
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 # -- ECS ----------------------------------------------------
 
@@ -23,11 +23,10 @@ def get_position(entity: int) -> Tuple[float, float]:
     """Get the position of an entity's Transform component."""
     ...
 
-def add_sprite(entity: int, texture_id: str, width: int = 0, height: int = 0) -> None:
-    """Add a Sprite component to an entity. Width/height auto-filled from texture if omitted."""
+def add_sprite(entity: int, textureId: str, width: Optional[int] = None, height: Optional[int] = None) -> None:
     ...
 
-def play_animation(entity: int, tag_name: str) -> None:
+def play_animation(entity: int, tagName: str) -> None:
     """Play a named animation tag on the entity's sprite."""
     ...
 
@@ -45,18 +44,6 @@ def set_animation_looping(entity: int, looping: bool) -> None:
 
 def set_animation_frame(entity: int, frame: int) -> None:
     """Set the current animation frame index."""
-    ...
-
-# -- Assets -------------------------------------------------
-
-PROJECT_ROOT: str
-
-def load_texture(id: str, path: str) -> None:
-    """Load a texture from a file and store it with a unique ID."""
-    ...
-
-def load_aseprite(id: str, path: str) -> None:
-    """Load an .aseprite file and store it as a texture with a unique ID."""
     ...
 
 # -- Physics ------------------------------------------------
@@ -133,3 +120,15 @@ KEY_UP: int
 KEY_DOWN: int
 KEY_LEFT: int
 KEY_RIGHT: int
+
+# -- Asset --------------------------------------------------
+
+def load_texture(id: str, path: str) -> None:
+    """Load a texture from a file and store it with a unique ID."""
+    ...
+
+def load_aseprite(id: str, path: str) -> None:
+    """Load an .aseprite file and store it as a texture with a unique ID."""
+    ...
+
+PROJECT_ROOT: str

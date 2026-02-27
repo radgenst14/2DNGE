@@ -114,14 +114,20 @@ def extract_m_def_blocks(source: str) -> List[str]:
 
 
 def extract_m_attr_entries(source: str) -> List[ConstantDef]:
-    """Extract m.attr("NAME") = py::type_(...) constants."""
+    """Extract m.attr("NAME") = ... constants."""
     constants = []
     for match in re.finditer(
-        r'm\.attr\(\s*"([^"]+)"\s*\)\s*=\s*(py::\w+)\s*\(', source
+        r'm\.attr\(\s*"([^"]+)"\s*\)\s*=\s*(.+?)\s*;', source
     ):
         name = match.group(1)
-        type_wrapper = match.group(2)
-        python_type = ATTR_TYPE_MAP.get(type_wrapper, "int")
+        rhs = match.group(2).strip()
+        # Check if RHS is a py::type_() wrapper
+        type_match = re.match(r'(py::\w+)\s*\(', rhs)
+        if type_match:
+            python_type = ATTR_TYPE_MAP.get(type_match.group(1), "int")
+        else:
+            # Bare value — infer type from the macro/variable name or default to str
+            python_type = "str"
         constants.append(ConstantDef(name=name, python_type=python_type))
     return constants
 
@@ -161,6 +167,8 @@ def parse_params(params_str: str) -> List[Tuple[str, str]]:
         parts = param.rsplit(None, 1)
         if len(parts) == 2:
             cpp_type, name = parts
+            # Strip C++ reference/pointer sigils from the name
+            name = name.lstrip("&*")
             params.append((map_cpp_type(cpp_type), name))
     return params
 

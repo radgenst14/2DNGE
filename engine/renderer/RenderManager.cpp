@@ -2,13 +2,15 @@
 #include "Renderer.h"
 #include "AssetManager.h"
 #include "helpers/SpriteRenderer.h"
+#include "../core/Window.h"
 #include "../core/ecs/EntityManager.h"
 #include "../core/ecs/components/Sprite.h"
 #include "../core/ecs/components/Transform.h"
 #include "../core/ecs/ComponentTypeID.h"
 
 RenderManager::RenderManager(Window *window, EntityManager *entityManager)
-    : mEntityManager(entityManager)
+    : mEntityManager(entityManager),
+      mCamera(window->getWidth(), window->getHeight())
 {
     mRenderer = std::make_unique<Renderer>(window);
     mAssetManager = std::make_unique<AssetManager>(mRenderer.get());
@@ -48,8 +50,9 @@ void RenderManager::renderSprites()
             srcRect = &frameRect;
         }
 
-        mSpriteRenderer->drawSprite(sprite.textureId, static_cast<int>(transform.position.x),
-                                    static_cast<int>(transform.position.y), sprite.width, sprite.height,
+        glm::vec2 screenPos = mCamera.worldToScreen(transform.position);
+        mSpriteRenderer->drawSprite(sprite.textureId, static_cast<int>(screenPos.x),
+                                    static_cast<int>(screenPos.y), sprite.width, sprite.height,
                                     transform.rotation, SDL_FLIP_NONE, srcRect);
     }
 }

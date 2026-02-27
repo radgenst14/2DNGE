@@ -111,6 +111,7 @@ set(BINDING_SOURCES
     ${CMAKE_SOURCE_DIR}/engine/scripting/bindings/PhysicsBindings.cpp
     ${CMAKE_SOURCE_DIR}/engine/scripting/bindings/RenderBindings.cpp
     ${CMAKE_SOURCE_DIR}/engine/scripting/bindings/InputBindings.cpp
+    ${CMAKE_SOURCE_DIR}/engine/scripting/bindings/AssetBindings.cpp
 )
 
 add_custom_command(

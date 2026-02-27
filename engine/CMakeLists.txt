@@ -30,6 +30,8 @@ add_library(2dnge_engine STATIC
     renderer/RenderManager.h
     renderer/AssetManager.cpp
     renderer/AssetManager.h
+    renderer/Camera.cpp
+    renderer/Camera.h
     renderer/helpers/SpriteRenderer.cpp
     renderer/helpers/SpriteRenderer.h
     scripting/EngineBindings.cpp
