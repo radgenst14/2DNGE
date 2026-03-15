@@ -3,7 +3,19 @@
 DO NOT EDIT -- regenerate with: python tools/generate_stubs.py
 """
 
-from typing import Optional, Tuple
+from typing import Tuple
+
+# -- Asset --------------------------------------------------
+
+def load_texture(id: str, path: str) -> None:
+    """Load a texture from a file and store it with a unique ID."""
+    ...
+
+def load_aseprite(id: str, path: str) -> None:
+    """Load an .aseprite file and store it as a texture with a unique ID."""
+    ...
+
+PROJECT_ROOT: str
 
 # -- ECS ----------------------------------------------------
 
@@ -23,7 +35,7 @@ def get_position(entity: int) -> Tuple[float, float]:
     """Get the position of an entity's Transform component."""
     ...
 
-def add_sprite(entity: int, textureId: str, width: Optional[int] = None, height: Optional[int] = None) -> None:
+def add_sprite(entity: int, textureId: str, width: int = 0, height: int = 0) -> None:
     ...
 
 def play_animation(entity: int, tagName: str) -> None:
@@ -44,18 +56,6 @@ def set_animation_looping(entity: int, looping: bool) -> None:
 
 def set_animation_frame(entity: int, frame: int) -> None:
     """Set the current animation frame index."""
-    ...
-
-# -- Physics ------------------------------------------------
-
-def physics_update(dt: float) -> None:
-    """Update the physics simulation by a given time step (dt). This will move all physics-enabled entities according to their velocities and handle collisions."""
-    ...
-
-# -- Render -------------------------------------------------
-
-def render() -> None:
-    """Render the current frame, including all sprites and other renderable entities."""
     ...
 
 # -- Input --------------------------------------------------
@@ -121,14 +121,34 @@ KEY_DOWN: int
 KEY_LEFT: int
 KEY_RIGHT: int
 
-# -- Asset --------------------------------------------------
+# -- Physics ------------------------------------------------
 
-def load_texture(id: str, path: str) -> None:
-    """Load a texture from a file and store it with a unique ID."""
+def physics_update(dt: float) -> None:
+    """Update the physics simulation by a given time step (dt). This will move all physics-enabled entities according to their velocities and handle collisions."""
     ...
 
-def load_aseprite(id: str, path: str) -> None:
-    """Load an .aseprite file and store it as a texture with a unique ID."""
+# -- Render -------------------------------------------------
+
+def render() -> None:
+    """Render the current frame, including all sprites and other renderable entities."""
     ...
 
-PROJECT_ROOT: str
+def set_camera_position(x: float, y: float) -> None:
+    """Set the camera position in world coordinates."""
+    ...
+
+def get_camera_position() -> Tuple[float, float]:
+    """Get the current camera position as (x, y)."""
+    ...
+
+def move_camera(dx: float, dy: float) -> None:
+    """Move the camera by a delta in world coordinates."""
+    ...
+
+def set_camera_zoom(zoom: float) -> None:
+    """Set the camera zoom level."""
+    ...
+
+def get_camera_zoom() -> float:
+    """Get the current camera zoom level."""
+    ...

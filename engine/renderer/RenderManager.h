@@ -28,6 +28,7 @@ public:
     void updateAnimations(float dt);
 
     AssetManager *getAssetManager() const { return mAssetManager.get(); }
+    Camera &getCamera() { return mCamera; }
 
 private:
     std::unique_ptr<Renderer> mRenderer;             ///< Unique pointer to the Renderer, responsible for all rendering operations.

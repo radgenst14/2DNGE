@@ -51,7 +51,7 @@ RETURN_TYPE_OVERRIDES: Dict[str, str] = {
 @dataclass
 class FunctionDef:
     name: str
-    params: List[Tuple[str, str]]  # [(python_type, param_name), ...]
+    params: List[Tuple[str, str, Optional[str]]]  # [(python_type, param_name, default), ...]
     return_type: str
     docstring: Optional[str]
 
@@ -152,8 +152,8 @@ def map_cpp_type(cpp_type: str) -> str:
     return cleaned
 
 
-def parse_params(params_str: str) -> List[Tuple[str, str]]:
-    """Parse a C++ lambda parameter list into [(python_type, name), ...]."""
+def parse_params(params_str: str) -> List[Tuple[str, str, Optional[str]]]:
+    """Parse a C++ lambda parameter list into [(python_type, name, default), ...]."""
     params_str = params_str.strip()
     if not params_str:
         return []
@@ -169,8 +169,25 @@ def parse_params(params_str: str) -> List[Tuple[str, str]]:
             cpp_type, name = parts
             # Strip C++ reference/pointer sigils from the name
             name = name.lstrip("&*")
-            params.append((map_cpp_type(cpp_type), name))
+            params.append((map_cpp_type(cpp_type), name, None))
     return params
+
+
+def extract_py_arg_defaults(block: str) -> Dict[str, str]:
+    """Extract default values from py::arg("name") = value patterns."""
+    defaults = {}
+    for match in re.finditer(r'py::arg\(\s*"([^"]+)"\s*\)\s*=\s*([^,)]+)', block):
+        name = match.group(1)
+        cpp_default = match.group(2).strip()
+        # Map C++ default literals to Python literals
+        default_map = {"true": "True", "false": "False", "nullptr": "None",
+                       "py::none()": "None", "0.0f": "0.0", "1.0f": "1.0"}
+        py_default = default_map.get(cpp_default, cpp_default)
+        # Strip trailing 'f' from float literals like "0.5f"
+        if re.match(r'^-?\d+\.?\d*f$', py_default):
+            py_default = py_default.rstrip("f")
+        defaults[name] = py_default
+    return defaults
 
 
 def parse_m_def_block(block: str) -> Optional[FunctionDef]:
@@ -185,6 +202,11 @@ def parse_m_def_block(block: str) -> Optional[FunctionDef]:
     lambda_match = re.search(r"\[\s*[^\]]*\]\s*\(([^)]*)\)", block)
     params_str = lambda_match.group(1) if lambda_match else ""
     params = parse_params(params_str)
+
+    # Apply py::arg defaults to params
+    arg_defaults = extract_py_arg_defaults(block)
+    params = [(ptype, name, arg_defaults.get(name, default))
+              for ptype, name, default in params]
 
     # Extract explicit return type: (...) -> ReturnType {
     return_match = re.search(
@@ -280,7 +302,11 @@ def generate_pyi(groups: List[BindingGroup]) -> str:
         lines.append("")
 
         for func in group.functions:
-            param_strs = ["{}: {}".format(name, ptype) for ptype, name in func.params]
+            param_strs = [
+                "{}: {} = {}".format(name, ptype, default) if default is not None
+                else "{}: {}".format(name, ptype)
+                for ptype, name, default in func.params
+            ]
             sig = "def {}({}) -> {}:".format(func.name, ", ".join(param_strs), func.return_type)
             lines.append(sig)
             if func.docstring:

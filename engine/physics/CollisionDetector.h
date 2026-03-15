@@ -6,18 +6,12 @@
 #include <glm/glm.hpp>
 #include "../core/ecs/ComponentTypeID.h"
 #include "../core/ecs/components/Collider.h"
+#include "Math.h"
 
 class EntityManager;
 
 class CollisionDetector
 {
-private:
-    struct AABB
-    {
-        glm::vec2 min;
-        glm::vec2 max;
-    };
-
 public:
     CollisionDetector(EntityManager *entityManager) : mEntityManager(entityManager) {};
     ~CollisionDetector();
@@ -26,12 +20,9 @@ public:
     CollisionDetector(const CollisionDetector &) = delete;
     CollisionDetector &operator=(const CollisionDetector &) = delete;
 
-    AABB getColliderAABB(EntityID entity, ECS::Collider collider);
+    Math::AABB getColliderAABB(EntityID entity, ECS::Collider collider);
 
     bool checkCollision(EntityID entityA, EntityID entityB);
-    bool checkAABBCollision(const AABB &aabbA, const AABB &aabbB);
-    bool checkCircleCollision(const glm::vec2 &centerA, float radiusA, const glm::vec2 &centerB, float radiusB);
-    bool checkAABBCircleCollision(const AABB &aabb, const glm::vec2 &circleCenter, float circleRadius);
 
 private:
     EntityManager *mEntityManager;

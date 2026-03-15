@@ -51,8 +51,9 @@ void RenderManager::renderSprites()
         }
 
         glm::vec2 screenPos = mCamera.worldToScreen(transform.position);
-        mSpriteRenderer->drawSprite(sprite.textureId, static_cast<int>(screenPos.x),
-                                    static_cast<int>(screenPos.y), sprite.width, sprite.height,
+        int drawX = static_cast<int>(screenPos.x) - sprite.width / 2;
+        int drawY = static_cast<int>(screenPos.y) - sprite.height / 2;
+        mSpriteRenderer->drawSprite(sprite.textureId, drawX, drawY, sprite.width, sprite.height,
                                     transform.rotation, SDL_FLIP_NONE, srcRect);
     }
 }
