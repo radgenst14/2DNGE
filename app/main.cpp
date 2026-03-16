@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     Application app;
 
     // Set the initial scene to the Python-scripted MainScene
-    std::string scenePath = std::string(PROJECT_ROOT) + "/game/scenes/MainScene.py";
+    std::string scenePath = std::string(PROJECT_ROOT) + "/game/scenes/BreakoutScene.py";
     app.getSceneManager()->setScene(std::make_unique<ScriptableScene>(scenePath, app.getWindow(), app.getInputManager()));
     app.run();
     return 0;

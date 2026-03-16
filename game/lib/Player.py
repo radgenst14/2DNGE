@@ -12,8 +12,15 @@ class Player(GameObject):
 
     def update(self, dt):
         vx = 0.0
+        vy = 0.0
+        
         if engine.is_key_down(engine.KEY_LEFT): 
             vx = -self.speed
         if engine.is_key_down(engine.KEY_RIGHT): 
             vx = self.speed
-        engine.set_velocity(self.id, vx, 0.0)
+        if engine.is_key_down(engine.KEY_UP): 
+            vy = -self.speed
+        if engine.is_key_down(engine.KEY_DOWN): 
+            vy = self.speed
+
+        engine.set_velocity(self.id, vx, vy)
