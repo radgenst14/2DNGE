@@ -13,11 +13,12 @@ class Window;
 class EntityManager;
 class PhysicsManager;
 class RenderManager;
+class InputManager;
 
 class ScriptableScene : public IScene
 {
 public:
-    ScriptableScene(const std::string &scriptPath, Window *window);
+    ScriptableScene(const std::string &scriptPath, Window *window, InputManager *inputManager = nullptr);
     ~ScriptableScene();
 
     /* Delete copy constructor and assignment operator */
@@ -37,6 +38,7 @@ private:
     std::unique_ptr<EntityManager> mEntityManager;
     std::unique_ptr<PhysicsManager> mPhysicsManager;
     std::unique_ptr<RenderManager> mRenderManager;
+    InputManager *mInputManager = nullptr;
 };
 
 #endif

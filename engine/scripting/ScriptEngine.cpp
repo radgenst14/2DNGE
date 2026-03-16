@@ -71,6 +71,15 @@ bool ScriptEngine::loadScript(const std::string &path)
         // Add Python builtins so the script can use print(), range(), etc.
         mGlobals["__builtins__"] = py::module_::import("builtins");
 
+        // Add project root to sys.path so scripts can import game packages
+        py::module_ sys = py::module_::import("sys");
+        py::list sysPath = sys.attr("path");
+        py::str projectRoot(PROJECT_ROOT);
+        if (!sysPath.contains(projectRoot))
+        {
+            sysPath.insert(0, projectRoot);
+        }
+
         // Read the script file and execute it into our namespace
         std::ifstream file(path);
         if (!file.is_open())

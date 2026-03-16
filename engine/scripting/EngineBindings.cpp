@@ -4,6 +4,7 @@
 #include "bindings/PhysicsBindings.h"
 #include "bindings/RenderBindings.h"
 #include "bindings/AssetBindings.h"
+#include "bindings/InputBindings.h"
 
 namespace py = pybind11;
 
@@ -69,4 +70,5 @@ PYBIND11_EMBEDDED_MODULE(engine, m)
     registerPhysicsBindings(m);
     registerRenderBindings(m);
     registerAssetBindings(m);
+    registerInputBindings(m);
 }

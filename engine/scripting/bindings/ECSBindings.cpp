@@ -46,6 +46,21 @@ void registerECSBindings(py::module_ &m)
         auto &t = EngineBindings::getEntityManager()->getComponent<ECS::Transform>(entity);
         return py::make_tuple(t.position.x, t.position.y); }, "Get the position of an entity's Transform component.");
 
+    m.def("set_position", [](EntityID entity, float x, float y)
+          {
+        auto &t = EngineBindings::getEntityManager()->getComponent<ECS::Transform>(entity);
+        t.position = {x, y}; }, "Set the position of an entity's Transform component.");
+
+    m.def("get_velocity", [](EntityID entity) -> py::tuple
+          {
+        auto &rb = EngineBindings::getEntityManager()->getComponent<ECS::RigidBody>(entity);
+        return py::make_tuple(rb.velocity.x, rb.velocity.y); }, "Get the velocity of an entity's RigidBody component.");
+
+    m.def("set_velocity", [](EntityID entity, float vx, float vy)
+          {
+        auto &rb = EngineBindings::getEntityManager()->getComponent<ECS::RigidBody>(entity);
+        rb.velocity = {vx, vy}; }, "Set the velocity of an entity's RigidBody component.");
+
     m.def("add_sprite", [](EntityID entity, const std::string &textureId, int width, int height)
           {
         auto *assetManager = EngineBindings::getAssetManager();

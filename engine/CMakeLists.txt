@@ -46,6 +46,8 @@ add_library(2dnge_engine STATIC
     scripting/bindings/AssetBindings.h
     scripting/bindings/ECSBindings.cpp
     scripting/bindings/ECSBindings.h
+    scripting/bindings/InputBindings.cpp
+    scripting/bindings/InputBindings.h
     scripting/bindings/PhysicsBindings.cpp
     scripting/bindings/PhysicsBindings.h
     scripting/bindings/RenderBindings.cpp

@@ -4,8 +4,8 @@
 #include "../physics/PhysicsManager.h"
 #include "../renderer/RenderManager.h"
 
-ScriptableScene::ScriptableScene(const std::string &scriptPath, Window *window)
-    : mScriptPath(scriptPath), mWindow(window)
+ScriptableScene::ScriptableScene(const std::string &scriptPath, Window *window, InputManager *inputManager)
+    : mScriptPath(scriptPath), mWindow(window), mInputManager(inputManager)
 {
 }
 
@@ -34,6 +34,7 @@ void ScriptableScene::init()
 
     EngineBindings::setEntityManager(mEntityManager.get());
     EngineBindings::setPhysicsManager(mPhysicsManager.get());
+    EngineBindings::setInputManager(mInputManager);
 
     if (!mScriptEngine.loadScript(mScriptPath))
     {
@@ -68,6 +69,7 @@ void ScriptableScene::cleanup()
     EngineBindings::setEntityManager(nullptr);
     EngineBindings::setPhysicsManager(nullptr);
     EngineBindings::setRenderManager(nullptr);
+    EngineBindings::setInputManager(nullptr);
     EngineBindings::setAssetManager(nullptr);
 
     // Destroy managers that reference EntityManager first

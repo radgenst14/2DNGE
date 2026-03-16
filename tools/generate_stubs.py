@@ -80,6 +80,34 @@ def strip_cpp_comments(source: str) -> str:
     return source
 
 
+def expand_simple_macros(source: str) -> str:
+    """Expand simple #define macros used in binding files (e.g. BIND_KEY)."""
+    # Match: #define NAME(params) body
+    macro_pattern = re.compile(
+        r"#define\s+(\w+)\(([^)]*)\)\s+(.+?)(?:\n|$)"
+    )
+    macros = {}
+    for m in macro_pattern.finditer(source):
+        macro_name = m.group(1)
+        macro_params = [p.strip() for p in m.group(2).split(",")]
+        macro_body = m.group(3).strip()
+        macros[macro_name] = (macro_params, macro_body)
+
+    # Expand each macro usage: NAME(arg1, arg2, ...)
+    for macro_name, (params, body) in macros.items():
+        usage_pattern = re.compile(
+            r"\b" + re.escape(macro_name) + r"\s*\(([^)]*)\)\s*;?"
+        )
+        for usage in usage_pattern.finditer(source):
+            args = [a.strip() for a in usage.group(1).split(",")]
+            expanded = body
+            for param, arg in zip(params, args):
+                expanded = expanded.replace(param, arg)
+            source = source.replace(usage.group(0), expanded + ";")
+
+    return source
+
+
 def extract_m_def_blocks(source: str) -> List[str]:
     """Extract complete m.def(...) call strings using paren-depth tracking."""
     blocks = []
@@ -259,6 +287,7 @@ def parse_binding_file(filepath: str) -> BindingGroup:
         source = f.read()
 
     source = strip_cpp_comments(source)
+    source = expand_simple_macros(source)
     label = derive_group_label(filepath)
 
     functions = []

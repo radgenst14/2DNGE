@@ -1,52 +1,51 @@
 import engine
+from typing import Optional
+from game.lib.GameObject import GameObject
+from game.lib.Player import Player
 
 SPRITES_FOLDER = "/game/sprites"
-entity1 = None
+
+background: Optional[GameObject] = None
+player: Optional[Player] = None
+entities: list[GameObject] = []
+
 
 def init():
-    global entity1, background
+    global background, player, entities
 
-    # --- Background (created FIRST so it renders behind everything) ---
-    bg_path = engine.PROJECT_ROOT + SPRITES_FOLDER + "/Debug.aseprite"
-    engine.load_aseprite("background", bg_path)
+    engine.load_aseprite("background", engine.PROJECT_ROOT + SPRITES_FOLDER + "/Debug.aseprite")
+    engine.load_aseprite("player", engine.PROJECT_ROOT + SPRITES_FOLDER + "/Armored001.aseprite")
 
-    background = engine.create_entity()
-    engine.add_transform(background, 0.0, 0.0)
-    engine.add_sprite(background, "background", 400, 300)  # match your window size
+    background = GameObject()
+    background.add_sprite("background", 400, 300)
 
-    # --- Player (created AFTER, so it renders on top) ---
-    sprite_path = engine.PROJECT_ROOT + SPRITES_FOLDER + "/Armored001.aseprite"
-    engine.load_aseprite("player", sprite_path)
+    player = Player(0.0, 0.0)
+    entities.append(player)
 
-    entity1 = engine.create_entity()
-    engine.add_transform(entity1, -50.0, 0.0)
-    engine.add_rigidbody(entity1, 5.0, 0.0, 1.0)
-    engine.add_sprite(entity1, "player", 32, 32)
-
-    entity2 = engine.create_entity()
-    engine.add_transform(entity2, 50.0, 0.0)
-    engine.add_rigidbody(entity2, -5.0, 0.0, 1.0)
-    engine.add_sprite(entity2, "player", 32, 32)
-
-    engine.add_collider_box(entity1, 22, 32)
-    engine.add_collider_box(entity2, 22, 32)
+    npc = GameObject(100.0, 0.0).add_rigidbody(mass=1.0).add_box_collider(20.0, 28.0, 0.0, 2.0).add_sprite("player", 64, 64)
+    entities.append(npc)
 
     engine.draw_colliders(True)
 
-def set_camera_at_sprite(entity):
-    x, y = engine.get_position(entity)
-    engine.set_camera_position(x, y)
-    engine.set_camera_zoom(2.0)
 
 def update(dt):
+    for entity in entities:
+        entity.update(dt)
     engine.physics_update(dt)
-    set_camera_at_sprite(entity1)
+
+    assert player is not None
+    px, py = player.get_position()
+    engine.set_camera_position(px, py)
+    engine.set_camera_zoom(1.0)
+
 
 def input():
     pass
 
+
 def render():
     engine.render()
+
 
 def cleanup():
     pass

@@ -41,6 +41,18 @@ def get_position(entity: int) -> Tuple[float, float]:
     """Get the position of an entity's Transform component."""
     ...
 
+def set_position(entity: int, x: float, y: float) -> None:
+    """Set the position of an entity's Transform component."""
+    ...
+
+def get_velocity(entity: int) -> Tuple[float, float]:
+    """Get the velocity of an entity's RigidBody component."""
+    ...
+
+def set_velocity(entity: int, vx: float, vy: float) -> None:
+    """Set the velocity of an entity's RigidBody component."""
+    ...
+
 def add_sprite(entity: int, textureId: str, width: int = 0, height: int = 0) -> None:
     ...
 
@@ -67,15 +79,15 @@ def set_animation_frame(entity: int, frame: int) -> None:
 # -- Input --------------------------------------------------
 
 def is_key_down(scancode: int) -> bool:
-    """Check if a key is currently being held down. Returns True if the key corresponding to the given scancode is pressed, False otherwise."""
+    """Check if a key is currently being held down."""
     ...
 
 def is_key_pressed(scancode: int) -> bool:
-    """Check if a key was pressed this frame. Returns True if the key corresponding to the given scancode was pressed this frame, False otherwise."""
+    """Check if a key was pressed this frame."""
     ...
 
 def is_key_released(scancode: int) -> bool:
-    """Check if a key was released this frame. Returns True if the key corresponding to the given scancode was released this frame, False otherwise."""
+    """Check if a key was released this frame."""
     ...
 
 KEY_A: int
@@ -139,10 +151,6 @@ def render() -> None:
     """Render the current frame, including all sprites and other renderable entities."""
     ...
 
-def draw_colliders(enabled: bool = True) -> None:
-    """Enable or disable debug collider outline drawing."""
-    ...
-
 def set_camera_position(x: float, y: float) -> None:
     """Set the camera position in world coordinates."""
     ...
@@ -157,6 +165,10 @@ def move_camera(dx: float, dy: float) -> None:
 
 def set_camera_zoom(zoom: float) -> None:
     """Set the camera zoom level."""
+    ...
+
+def draw_colliders(enabled: bool = True) -> None:
+    """Enable or disable debug collider outline drawing."""
     ...
 
 def get_camera_zoom() -> float:

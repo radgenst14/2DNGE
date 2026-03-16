@@ -32,6 +32,7 @@ public:
 
     SceneManager *getSceneManager() const { return mSceneManager.get(); }
     Window *getWindow() const { return mWindow.get(); }
+    InputManager *getInputManager() const { return mInputManager.get(); }
 
     /** @brief  Methods for handling input, updating the application state, and rendering the application. */
     void handleInput();
