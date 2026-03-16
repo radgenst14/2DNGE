@@ -22,7 +22,7 @@ public:
 
     Math::AABB getColliderAABB(EntityID entity, ECS::Collider collider);
 
-    bool checkCollision(EntityID entityA, EntityID entityB);
+    Math::CollisionResult checkCollision(EntityID entityA, EntityID entityB);
 
 private:
     EntityManager *mEntityManager;

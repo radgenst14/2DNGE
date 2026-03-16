@@ -37,6 +37,12 @@ void registerRenderBindings(py::module_ &m)
               if (rm) rm->getCamera().setZoom(zoom);
           }, py::arg("zoom"), "Set the camera zoom level.");
 
+    m.def("draw_colliders", [](bool enabled)
+          {
+              auto *rm = EngineBindings::getRenderManager();
+              if (rm) rm->setDrawColliders(enabled);
+          }, py::arg("enabled") = true, "Enable or disable debug collider outline drawing.");
+
     m.def("get_camera_zoom", []() -> float
           {
               auto *rm = EngineBindings::getRenderManager();

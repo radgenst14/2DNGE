@@ -19,13 +19,24 @@ def init():
     engine.load_aseprite("player", sprite_path)
 
     entity1 = engine.create_entity()
-    engine.add_transform(entity1, 100.0, 100.0)
-    engine.add_rigidbody(entity1, 50.0, 0.0, 1.0)
-    engine.add_sprite(entity1, "player")
+    engine.add_transform(entity1, -50.0, 0.0)
+    engine.add_rigidbody(entity1, 5.0, 0.0, 1.0)
+    engine.add_sprite(entity1, "player", 32, 32)
+
+    entity2 = engine.create_entity()
+    engine.add_transform(entity2, 50.0, 0.0)
+    engine.add_rigidbody(entity2, -5.0, 0.0, 1.0)
+    engine.add_sprite(entity2, "player", 32, 32)
+
+    engine.add_collider_box(entity1, 22, 32)
+    engine.add_collider_box(entity2, 22, 32)
+
+    engine.draw_colliders(True)
 
 def set_camera_at_sprite(entity):
     x, y = engine.get_position(entity)
     engine.set_camera_position(x, y)
+    engine.set_camera_zoom(2.0)
 
 def update(dt):
     engine.physics_update(dt)

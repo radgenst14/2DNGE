@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "../core/Window.h"
+#include <cmath>
 
 Renderer::Renderer(Window *window)
 {
@@ -70,4 +71,25 @@ void Renderer::drawRect(const ECS::Transform &transform, int width, int height)
 
     // Render the filled rectangle
     SDL_RenderFillRect(mRenderer, &destRect);
+}
+
+void Renderer::drawRectOutline(int x, int y, int w, int h)
+{
+    SDL_Rect rect = {x, y, w, h};
+    SDL_RenderDrawRect(mRenderer, &rect);
+}
+
+void Renderer::drawCircleOutline(int cx, int cy, int radius, int segments)
+{
+    const float step = 2.0f * static_cast<float>(M_PI) / segments;
+    for (int i = 0; i < segments; ++i)
+    {
+        float angle1 = i * step;
+        float angle2 = (i + 1) * step;
+        int x1 = cx + static_cast<int>(std::cos(angle1) * radius);
+        int y1 = cy + static_cast<int>(std::sin(angle1) * radius);
+        int x2 = cx + static_cast<int>(std::cos(angle2) * radius);
+        int y2 = cy + static_cast<int>(std::sin(angle2) * radius);
+        SDL_RenderDrawLine(mRenderer, x1, y1, x2, y2);
+    }
 }

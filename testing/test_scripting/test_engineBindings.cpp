@@ -4,6 +4,7 @@
 #include "engine/core/ecs/EntityManager.h"
 #include "engine/core/ecs/components/Transform.h"
 #include "engine/core/ecs/components/RigidBody.h"
+#include "engine/core/ecs/components/Collider.h"
 #include "engine/core/InputManager.h"
 
 class EngineBindingsTest : public ::testing::Test
@@ -199,4 +200,90 @@ TEST_F(EngineBindingsTest, AddSpriteThrowsOnMissingTexture)
     se.execute("e = engine.create_entity()");
 
     EXPECT_THROW(se.execute("engine.add_sprite(e, 'nonexistent')"), py::error_already_set);
+}
+
+// ===========================================================================
+// Collider bindings
+// ===========================================================================
+
+TEST_F(EngineBindingsTest, AddColliderBoxAttrExists)
+{
+    se.execute("import engine");
+    EXPECT_TRUE(se.execute("hasattr(engine, 'add_collider_box')").cast<bool>());
+}
+
+TEST_F(EngineBindingsTest, AddColliderCircleAttrExists)
+{
+    se.execute("import engine");
+    EXPECT_TRUE(se.execute("hasattr(engine, 'add_collider_circle')").cast<bool>());
+}
+
+TEST_F(EngineBindingsTest, AddColliderBoxFromPython)
+{
+    se.execute("import engine");
+    se.execute("e = engine.create_entity()");
+    se.execute("engine.add_transform(e, 0.0, 0.0)");
+    se.execute("engine.add_collider_box(e, 32.0, 16.0)");
+
+    EXPECT_TRUE(em.hasComponent<ECS::Collider>(0));
+    auto &c = em.getComponent<ECS::Collider>(0);
+    EXPECT_EQ(c.type, ECS::ColliderType::Box);
+    EXPECT_FLOAT_EQ(c.size.x, 32.0f);
+    EXPECT_FLOAT_EQ(c.size.y, 16.0f);
+    EXPECT_FLOAT_EQ(c.offset.x, 0.0f);
+    EXPECT_FLOAT_EQ(c.offset.y, 0.0f);
+}
+
+TEST_F(EngineBindingsTest, AddColliderBoxWithOffset)
+{
+    se.execute("import engine");
+    se.execute("e = engine.create_entity()");
+    se.execute("engine.add_transform(e, 0.0, 0.0)");
+    se.execute("engine.add_collider_box(e, 10.0, 10.0, 5.0, -3.0)");
+
+    auto &c = em.getComponent<ECS::Collider>(0);
+    EXPECT_FLOAT_EQ(c.offset.x, 5.0f);
+    EXPECT_FLOAT_EQ(c.offset.y, -3.0f);
+}
+
+TEST_F(EngineBindingsTest, AddColliderCircleFromPython)
+{
+    se.execute("import engine");
+    se.execute("e = engine.create_entity()");
+    se.execute("engine.add_transform(e, 0.0, 0.0)");
+    se.execute("engine.add_collider_circle(e, 5.0)");
+
+    EXPECT_TRUE(em.hasComponent<ECS::Collider>(0));
+    auto &c = em.getComponent<ECS::Collider>(0);
+    EXPECT_EQ(c.type, ECS::ColliderType::Circle);
+    EXPECT_FLOAT_EQ(c.radius, 5.0f);
+    EXPECT_FLOAT_EQ(c.offset.x, 0.0f);
+    EXPECT_FLOAT_EQ(c.offset.y, 0.0f);
+}
+
+TEST_F(EngineBindingsTest, AddColliderCircleWithOffset)
+{
+    se.execute("import engine");
+    se.execute("e = engine.create_entity()");
+    se.execute("engine.add_transform(e, 0.0, 0.0)");
+    se.execute("engine.add_collider_circle(e, 3.0, 1.0, 2.0)");
+
+    auto &c = em.getComponent<ECS::Collider>(0);
+    EXPECT_FLOAT_EQ(c.offset.x, 1.0f);
+    EXPECT_FLOAT_EQ(c.offset.y, 2.0f);
+}
+
+// ===========================================================================
+// RigidBody restitution default
+// ===========================================================================
+
+TEST_F(EngineBindingsTest, RigidBodyHasDefaultRestitution)
+{
+    se.execute("import engine");
+    se.execute("e = engine.create_entity()");
+    se.execute("engine.add_transform(e, 0.0, 0.0)");
+    se.execute("engine.add_rigidbody(e, 0.0, 0.0, 1.0)");
+
+    auto &rb = em.getComponent<ECS::RigidBody>(0);
+    EXPECT_FLOAT_EQ(rb.restitution, 0.5f);
 }

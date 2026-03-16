@@ -22,6 +22,8 @@ add_library(2dnge_engine STATIC
     physics/Math.h
     physics/CollisionDetector.cpp
     physics/CollisionDetector.h
+    physics/CollisionHandler.cpp
+    physics/CollisionHandler.h
     physics/PhysicsManager.cpp
     physics/PhysicsManager.h
     renderer/Renderer.cpp

@@ -33,7 +33,9 @@
       "Bash(\"C:/Users/tucke/.virtualenvs/try_django-CBq8jrnX/Scripts/python.exe\":*)",
       "Bash(wc -l /c/Users/tucke/OneDrive/Desktop/CSE/2DNGE/engine/scripting/bindings/*.cpp)",
       "Bash(find /c/Users/tucke/OneDrive/Desktop/CSE/2DNGE -type f \\\\\\( -name \"*.cpp\" -o -name \"*.h\" \\\\\\) ! -path \"*/build/*\" -exec wc -l {} +)",
-      "Bash(find . -type f -name \"*.py\" ! -path \"*/build/*\" -exec wc -l {} +)"
+      "Bash(find . -type f -name \"*.py\" ! -path \"*/build/*\" -exec wc -l {} +)",
+      "Bash(grep -h \"^#include\" engine/**/*.cpp engine/**/*.h)",
+      "Bash(git rm:*)"
     ]
   }
 }

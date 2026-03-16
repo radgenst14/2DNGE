@@ -62,6 +62,16 @@ public:
     void drawRect(const ECS::Transform &transform, int width, int height);
 
     /**
+     * @brief Draw a rectangle outline (unfilled)
+     */
+    void drawRectOutline(int x, int y, int w, int h);
+
+    /**
+     * @brief Draw a circle outline using line segments
+     */
+    void drawCircleOutline(int cx, int cy, int radius, int segments = 32);
+
+    /**
      * @brief Get the underlying SDL_Renderer pointer.
      * @return SDL_Renderer*
      */

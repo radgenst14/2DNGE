@@ -3,6 +3,7 @@
 #include "../../core/ecs/EntityManager.h"
 #include "../../core/ecs/components/Transform.h"
 #include "../../core/ecs/components/RigidBody.h"
+#include "../../core/ecs/components/Collider.h"
 #include "../../core/ecs/components/Sprite.h"
 #include "../../renderer/AssetManager.h"
 
@@ -23,6 +24,22 @@ void registerECSBindings(py::module_ &m)
         rb.velocity = {vx, vy};
         rb.mass = mass;
         EngineBindings::getEntityManager()->addComponent(entity, rb); }, "Add a RigidBody component to an entity.");
+
+    m.def("add_collider_box", [](EntityID entity, float width, float height, float offsetX, float offsetY)
+          {
+    ECS::Collider collider{};
+    collider.type = ECS::ColliderType::Box;
+    collider.offset = {offsetX, offsetY};
+    collider.size = {width, height};
+    EngineBindings::getEntityManager()->addComponent(entity, collider); }, "Add a box Collider component to an entity.", py::arg("entity"), py::arg("width"), py::arg("height"), py::arg("offsetX") = 0.0f, py::arg("offsetY") = 0.0f);
+
+    m.def("add_collider_circle", [](EntityID entity, float radius, float offsetX, float offsetY)
+          {
+    ECS::Collider collider{};
+    collider.type = ECS::ColliderType::Circle;
+    collider.offset = {offsetX, offsetY};
+    collider.radius = radius;
+    EngineBindings::getEntityManager()->addComponent(entity, collider); }, "Add a circle Collider component to an entity.", py::arg("entity"), py::arg("radius"), py::arg("offsetX") = 0.0f, py::arg("offsetY") = 0.0f);
 
     m.def("get_position", [](EntityID entity) -> py::tuple
           {

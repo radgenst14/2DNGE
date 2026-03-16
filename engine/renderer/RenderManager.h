@@ -25,7 +25,11 @@ public:
 
     void render();
     void renderSprites();
+    void debugDrawColliders();
     void updateAnimations(float dt);
+
+    void setDrawColliders(bool enabled) { mDrawColliders = enabled; }
+    bool getDrawColliders() const { return mDrawColliders; }
 
     AssetManager *getAssetManager() const { return mAssetManager.get(); }
     Camera &getCamera() { return mCamera; }
@@ -36,6 +40,7 @@ private:
     std::unique_ptr<AssetManager> mAssetManager;     ///< Unique pointer to the AssetManager, responsible for loading and managing textures.
     EntityManager *mEntityManager;                   ///< Pointer to the EntityManager, used to access entities and their components for rendering.
     Camera mCamera;                                  ///< The Camera instance used for world-to-screen transformations during rendering.
+    bool mDrawColliders{false};                       ///< Whether to draw debug collider outlines.
 };
 
 #endif

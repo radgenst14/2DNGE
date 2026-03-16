@@ -2,8 +2,13 @@
 
 #include "engine/core/ecs/components/Transform.h"
 #include "engine/core/ecs/components/RigidBody.h"
+#include "engine/core/ecs/components/Collider.h"
 #include "engine/physics/PhysicsManager.h"
 #include "engine/core/ecs/EntityManager.h"
+
+// =============================================================================
+// Velocity integration (existing tests, preserved)
+// =============================================================================
 
 TEST(PhysicsManagerTest, UpdateMovesEntityRight)
 {
@@ -178,4 +183,180 @@ TEST(PhysicsManagerTest, SmallDeltaTimePrecision)
 
     auto &t = em.getComponent<ECS::Transform>(e);
     EXPECT_NEAR(t.position.x, 60.0f, 0.01f);
+}
+
+// =============================================================================
+// Collision detection + resolution integration
+// =============================================================================
+
+TEST(PhysicsManagerTest, CollidingEntitiesGetSeparated)
+{
+    EntityManager em;
+    PhysicsManager pm(&em);
+
+    // Two overlapping boxes with colliders, moving toward each other
+    EntityID a = em.createEntity();
+    em.addComponent(a, ECS::Transform{{-0.5f, 0.0f}});
+    em.addComponent(a, ECS::RigidBody{{0.0f, 0.0f}, 1.0f});
+    ECS::Collider ca;
+    ca.type = ECS::ColliderType::Box;
+    ca.size = {2.0f, 2.0f};
+    em.addComponent(a, ca);
+
+    EntityID b = em.createEntity();
+    em.addComponent(b, ECS::Transform{{0.5f, 0.0f}});
+    em.addComponent(b, ECS::RigidBody{{0.0f, 0.0f}, 1.0f});
+    ECS::Collider cb;
+    cb.type = ECS::ColliderType::Box;
+    cb.size = {2.0f, 2.0f};
+    em.addComponent(b, cb);
+
+    // They overlap: A AABB [-1.5,-1] to [0.5,1], B AABB [-0.5,-1] to [1.5,1]
+    pm.update(0.0f); // zero dt so no velocity integration, just collision
+
+    auto &tA = em.getComponent<ECS::Transform>(a);
+    auto &tB = em.getComponent<ECS::Transform>(b);
+
+    // After resolution, they should be pushed apart
+    EXPECT_LT(tA.position.x, tB.position.x);
+    // The gap should be >= 2.0 (their combined half-widths)
+    // Check they're no longer overlapping
+    float aRight = tA.position.x + 1.0f;
+    float bLeft = tB.position.x - 1.0f;
+    EXPECT_LE(aRight, bLeft + 0.01f); // allow small epsilon
+}
+
+TEST(PhysicsManagerTest, NonCollidingEntitiesUnaffected)
+{
+    EntityManager em;
+    PhysicsManager pm(&em);
+
+    EntityID a = em.createEntity();
+    em.addComponent(a, ECS::Transform{{0.0f, 0.0f}});
+    em.addComponent(a, ECS::RigidBody{{1.0f, 0.0f}, 1.0f});
+    ECS::Collider ca;
+    ca.type = ECS::ColliderType::Box;
+    ca.size = {1.0f, 1.0f};
+    em.addComponent(a, ca);
+
+    EntityID b = em.createEntity();
+    em.addComponent(b, ECS::Transform{{10.0f, 0.0f}});
+    em.addComponent(b, ECS::RigidBody{{-1.0f, 0.0f}, 1.0f});
+    ECS::Collider cb;
+    cb.type = ECS::ColliderType::Box;
+    cb.size = {1.0f, 1.0f};
+    em.addComponent(b, cb);
+
+    pm.update(1.0f);
+
+    auto &tA = em.getComponent<ECS::Transform>(a);
+    auto &tB = em.getComponent<ECS::Transform>(b);
+
+    // Just velocity integration, no collision
+    EXPECT_FLOAT_EQ(tA.position.x, 1.0f);
+    EXPECT_FLOAT_EQ(tB.position.x, 9.0f);
+}
+
+TEST(PhysicsManagerTest, HeadOnCollisionReversesVelocities)
+{
+    EntityManager em;
+    PhysicsManager pm(&em);
+
+    // Two objects approaching head-on with perfect bounce
+    EntityID a = em.createEntity();
+    ECS::Transform ta;
+    ta.position = {-0.5f, 0.0f};
+    em.addComponent(a, ta);
+    ECS::RigidBody rbA;
+    rbA.velocity = {1.0f, 0.0f};
+    rbA.mass = 1.0f;
+    rbA.restitution = 1.0f;
+    em.addComponent(a, rbA);
+    ECS::Collider ca;
+    ca.type = ECS::ColliderType::Box;
+    ca.size = {2.0f, 2.0f};
+    em.addComponent(a, ca);
+
+    EntityID b = em.createEntity();
+    ECS::Transform tb;
+    tb.position = {0.5f, 0.0f};
+    em.addComponent(b, tb);
+    ECS::RigidBody rbB;
+    rbB.velocity = {-1.0f, 0.0f};
+    rbB.mass = 1.0f;
+    rbB.restitution = 1.0f;
+    em.addComponent(b, rbB);
+    ECS::Collider cb;
+    cb.type = ECS::ColliderType::Box;
+    cb.size = {2.0f, 2.0f};
+    em.addComponent(b, cb);
+
+    // dt=0 to isolate collision resolution from movement
+    pm.update(0.0f);
+
+    auto &finalRbA = em.getComponent<ECS::RigidBody>(a);
+    auto &finalRbB = em.getComponent<ECS::RigidBody>(b);
+
+    // With restitution=1.0 and equal mass, velocities should swap
+    EXPECT_NEAR(finalRbA.velocity.x, -1.0f, 0.01f);
+    EXPECT_NEAR(finalRbB.velocity.x, 1.0f, 0.01f);
+}
+
+TEST(PhysicsManagerTest, EntitiesWithoutCollidersSkipCollision)
+{
+    EntityManager em;
+    PhysicsManager pm(&em);
+
+    // Two overlapping entities but NO colliders -> no collision resolution
+    EntityID a = em.createEntity();
+    em.addComponent(a, ECS::Transform{{0.0f, 0.0f}});
+    em.addComponent(a, ECS::RigidBody{{1.0f, 0.0f}});
+
+    EntityID b = em.createEntity();
+    em.addComponent(b, ECS::Transform{{0.0f, 0.0f}});
+    em.addComponent(b, ECS::RigidBody{{-1.0f, 0.0f}});
+
+    pm.update(1.0f);
+
+    // Just velocity integration, no collision (no colliders)
+    EXPECT_FLOAT_EQ(em.getComponent<ECS::Transform>(a).position.x, 1.0f);
+    EXPECT_FLOAT_EQ(em.getComponent<ECS::Transform>(b).position.x, -1.0f);
+}
+
+TEST(PhysicsManagerTest, CircleCollisionInUpdateLoop)
+{
+    EntityManager em;
+    PhysicsManager pm(&em);
+
+    EntityID a = em.createEntity();
+    em.addComponent(a, ECS::Transform{{0.0f, 0.0f}});
+    ECS::RigidBody rbA;
+    rbA.velocity = {0.0f, 0.0f};
+    rbA.mass = 1.0f;
+    em.addComponent(a, rbA);
+    ECS::Collider ca;
+    ca.type = ECS::ColliderType::Circle;
+    ca.radius = 1.0f;
+    em.addComponent(a, ca);
+
+    EntityID b = em.createEntity();
+    em.addComponent(b, ECS::Transform{{0.5f, 0.0f}});
+    ECS::RigidBody rbB;
+    rbB.velocity = {0.0f, 0.0f};
+    rbB.mass = 1.0f;
+    em.addComponent(b, rbB);
+    ECS::Collider cb;
+    cb.type = ECS::ColliderType::Circle;
+    cb.radius = 1.0f;
+    em.addComponent(b, cb);
+
+    pm.update(0.0f);
+
+    auto &tA = em.getComponent<ECS::Transform>(a);
+    auto &tB = em.getComponent<ECS::Transform>(b);
+
+    // Circles should be pushed apart
+    EXPECT_LT(tA.position.x, tB.position.x);
+    float distance = tB.position.x - tA.position.x;
+    EXPECT_GE(distance, 1.99f); // should be ~2.0 (sum of radii)
 }

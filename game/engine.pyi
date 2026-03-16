@@ -31,6 +31,12 @@ def add_rigidbody(entity: int, vx: float, vy: float, mass: float) -> None:
     """Add a RigidBody component to an entity."""
     ...
 
+def add_collider_box(entity: int, width: float, height: float, offsetX: float = 0.0, offsetY: float = 0.0) -> None:
+    ...
+
+def add_collider_circle(entity: int, radius: float, offsetX: float = 0.0, offsetY: float = 0.0) -> None:
+    ...
+
 def get_position(entity: int) -> Tuple[float, float]:
     """Get the position of an entity's Transform component."""
     ...
@@ -131,6 +137,10 @@ def physics_update(dt: float) -> None:
 
 def render() -> None:
     """Render the current frame, including all sprites and other renderable entities."""
+    ...
+
+def draw_colliders(enabled: bool = True) -> None:
+    """Enable or disable debug collider outline drawing."""
     ...
 
 def set_camera_position(x: float, y: float) -> None:

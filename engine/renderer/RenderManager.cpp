@@ -6,6 +6,7 @@
 #include "../core/ecs/EntityManager.h"
 #include "../core/ecs/components/Sprite.h"
 #include "../core/ecs/components/Transform.h"
+#include "../core/ecs/components/Collider.h"
 #include "../core/ecs/ComponentTypeID.h"
 
 RenderManager::RenderManager(Window *window, EntityManager *entityManager)
@@ -26,6 +27,8 @@ void RenderManager::render()
     mRenderer->setDrawColor(0, 0, 0, 255); // Set clear color to black
     mRenderer->clear();                    // Clear the screen before rendering
     renderSprites();                       // Render all sprites
+    if (mDrawColliders)
+        debugDrawColliders();              // Draw debug collider outlines
     mRenderer->present();                  // Update the screen with the rendered content
 }
 
@@ -51,10 +54,45 @@ void RenderManager::renderSprites()
         }
 
         glm::vec2 screenPos = mCamera.worldToScreen(transform.position);
-        int drawX = static_cast<int>(screenPos.x) - sprite.width / 2;
-        int drawY = static_cast<int>(screenPos.y) - sprite.height / 2;
-        mSpriteRenderer->drawSprite(sprite.textureId, drawX, drawY, sprite.width, sprite.height,
+        float zoom = mCamera.getZoom();
+        int drawW = static_cast<int>(sprite.width * zoom);
+        int drawH = static_cast<int>(sprite.height * zoom);
+        int drawX = static_cast<int>(screenPos.x) - drawW / 2;
+        int drawY = static_cast<int>(screenPos.y) - drawH / 2;
+        mSpriteRenderer->drawSprite(sprite.textureId, drawX, drawY, drawW, drawH,
                                     transform.rotation, SDL_FLIP_NONE, srcRect);
+    }
+}
+
+void RenderManager::debugDrawColliders()
+{
+    mRenderer->setDrawColor(0, 255, 0, 255); // Green outlines
+
+    for (EntityID entity : mEntityManager->view<ECS::Collider, ECS::Transform>())
+    {
+        const auto &collider = mEntityManager->getComponent<ECS::Collider>(entity);
+        const auto &transform = mEntityManager->getComponent<ECS::Transform>(entity);
+
+        glm::vec2 worldPos = transform.position + collider.offset;
+        glm::vec2 screenPos = mCamera.worldToScreen(worldPos);
+        float zoom = mCamera.getZoom();
+
+        if (collider.type == ECS::ColliderType::Box)
+        {
+            int w = static_cast<int>(collider.size.x * zoom);
+            int h = static_cast<int>(collider.size.y * zoom);
+            int x = static_cast<int>(screenPos.x) - w / 2;
+            int y = static_cast<int>(screenPos.y) - h / 2;
+            mRenderer->drawRectOutline(x, y, w, h);
+        }
+        else if (collider.type == ECS::ColliderType::Circle)
+        {
+            int r = static_cast<int>(collider.radius * zoom);
+            mRenderer->drawCircleOutline(
+                static_cast<int>(screenPos.x),
+                static_cast<int>(screenPos.y),
+                r);
+        }
     }
 }
 

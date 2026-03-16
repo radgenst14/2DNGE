@@ -22,41 +22,52 @@ Math::AABB CollisionDetector::getColliderAABB(EntityID entity, ECS::Collider col
     return aabb;
 }
 
-bool CollisionDetector::checkCollision(EntityID entityA, EntityID entityB)
+Math::CollisionResult CollisionDetector::checkCollision(EntityID entityA, EntityID entityB)
 {
-    // If either entity doesn't have a collider, they can't collide
+    Math::CollisionResult result;
+
     if (!mEntityManager->hasComponent<ECS::Collider>(entityA) || !mEntityManager->hasComponent<ECS::Collider>(entityB))
     {
-        return false;
+        return result;
     }
 
-    // Get the colliders for both entities
     const auto &colliderA = mEntityManager->getComponent<ECS::Collider>(entityA);
     const auto &colliderB = mEntityManager->getComponent<ECS::Collider>(entityB);
 
-    // Check what type of colliders we have and call the appropriate collision check
     if (colliderA.type == ECS::ColliderType::Box && colliderB.type == ECS::ColliderType::Box)
     {
-        // For box-box collision, we can use AABB collision detection
         Math::AABB aabbA = getColliderAABB(entityA, colliderA);
         Math::AABB aabbB = getColliderAABB(entityB, colliderB);
-        return Math::checkAABBCollision(aabbA, aabbB);
+        return Math::resolveAABBCollision(aabbA, aabbB);
     }
     else if (colliderA.type == ECS::ColliderType::Circle && colliderB.type == ECS::ColliderType::Circle)
     {
-        // For circle-circle collision, we can use distance-based collision detection
         glm::vec2 centerA = mEntityManager->getComponent<ECS::Transform>(entityA).position + colliderA.offset;
         glm::vec2 centerB = mEntityManager->getComponent<ECS::Transform>(entityB).position + colliderB.offset;
-        return Math::checkCircleCollision(centerA, colliderA.radius, centerB, colliderB.radius);
+        return Math::resolveCircleCollision(centerA, colliderA.radius, centerB, colliderB.radius);
     }
     else
     {
-        // For box-circle collision, we can use a combination of AABB and circle collision detection
-        Math::AABB aabb = (colliderA.type == ECS::ColliderType::Box) ? getColliderAABB(entityA, colliderA) : getColliderAABB(entityB, colliderB);
-        glm::vec2 circleCenter = (colliderA.type == ECS::ColliderType::Circle) ? (mEntityManager->getComponent<ECS::Transform>(entityA).position + colliderA.offset) : (mEntityManager->getComponent<ECS::Transform>(entityB).position + colliderB.offset);
-        float circleRadius = (colliderA.type == ECS::ColliderType::Circle) ? colliderA.radius : colliderB.radius;
-        return Math::checkAABBCircleCollision(aabb, circleCenter, circleRadius);
-    }
+        // Determine which is box and which is circle
+        bool aIsBox = (colliderA.type == ECS::ColliderType::Box);
 
-    return false;
+        EntityID boxEntity = aIsBox ? entityA : entityB;
+        EntityID circleEntity = aIsBox ? entityB : entityA;
+        const auto &boxCollider = aIsBox ? colliderA : colliderB;
+        const auto &circleCollider = aIsBox ? colliderB : colliderA;
+
+        Math::AABB aabb = getColliderAABB(boxEntity, boxCollider);
+        glm::vec2 circleCenter = mEntityManager->getComponent<ECS::Transform>(circleEntity).position + circleCollider.offset;
+
+        result = Math::resolveAABBCircleCollision(aabb, circleCenter, circleCollider.radius);
+
+        // resolveAABBCircleCollision returns normal pointing from AABB toward circle.
+        // If A is the box, we need to flip so normal pushes A away from B.
+        if (aIsBox && result.isColliding)
+        {
+            result.normal = -result.normal;
+        }
+
+        return result;
+    }
 }
